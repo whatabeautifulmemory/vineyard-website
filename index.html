@@ -222,11 +222,25 @@
 		}
 
 		::-moz-selection {
-			background: rgba(134,239,172, 0.4);
+			background: rgba(151,117,250, 0.4);
 		}
 
 		::selection {
-			background: rgba(134,239,172, 0.4);
+			background: rgba(151,117,250, 0.4);
+		}
+
+		/* Accent color: Mantine violet-3 (#b197fc) — one step brighter than violet-4 (#9775fa) */
+		.text-accent {
+			color: #b197fc;
+		}
+
+		.hover-accent-dark:hover {
+			color: #845ef7; /* Mantine violet-5, for hover feedback */
+		}
+
+		/* VINEYARD.RUN logo text — kept one step darker than the rest, at Mantine violet-4 */
+		.text-logo {
+			color: #9775fa;
 		}
 
 		body {
@@ -241,7 +255,7 @@
 			height: 100%;
 			z-index: -1;
 			display: block;
-			background: radial-gradient(ellipse 120% 90% at 50% -10%, #04211d 0%, #010705 45%, #000000 100%);
+			background: radial-gradient(ellipse 120% 90% at 50% -10%, #151023 0%, #07050b 45%, #000000 100%);
 		}
 
 		@keyframes cursor-blink {
@@ -268,13 +282,13 @@
 		<div class="w-full container mx-auto p-6">
 
 			<div class="w-full flex items-center justify-between">
-				<a class="flex items-center no-underline hover:no-underline font-bold text-2xl lg:text-4xl text-green-200"
+				<a class="flex items-center no-underline hover:no-underline font-bold text-2xl lg:text-4xl text-logo"
 					href="/">
 					VINEYARD.RUN
 				</a>
 
 				<div class="flex w-1/2 justify-end content-center">
-					<a class="inline-block text-green-200 no-underline hover:text-green-600 text-center h-10 p-2 md:h-auto md:p-4"
+					<a class="inline-block text-accent hover-accent-dark no-underline text-center h-10 p-2 md:h-auto md:p-4"
 						data-tippy-content="LinkedIn" href="https://www.linkedin.com/in/whatabeautifulmoment/"
 						target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
 						<svg class="fill-current h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
@@ -291,7 +305,7 @@
 		<div class="container pt-24 md:pt-48 px-6 mx-auto flex flex-wrap flex-col md:flex-row items-center">
 			<div class="flex flex-col w-full xl:w-2/5 justify-center lg:items-start overflow-y-hidden">
 				<h1 id="id_title"
-					class="my-4 text-3xl md:text-5xl text-green-200 font-bold leading-tight text-center md:text-left slide-in-bottom-h1">
+					class="my-4 text-3xl md:text-5xl text-accent font-bold leading-tight text-center md:text-left slide-in-bottom-h1">
 					DIVE INTO THE SEA OF CYBER THREAT INTELLIGENCE<span id="id_title_cursor">|</span>
 				</h1>
 				<p
@@ -331,7 +345,7 @@
 			var dpr = Math.min(window.devicePixelRatio || 1, 2);
 			var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-			var NODE_RGB = '134,239,172'; // matches the site's green-200 accent
+			var NODE_RGB = '177,151,252'; // matches the site's accent, Mantine violet-3 (#b197fc)
 			var LINK_DIST = 260;
 			var BASE_SIZE = 2;      // "1x" reference bud size, in px
 			var GROW_FRAMES = 50;   // time for a new bud to sprout to full size
