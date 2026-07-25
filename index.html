@@ -298,10 +298,10 @@
 
 	<!-- telemetry HUD -->
 	<div id="id_telemetry" class="text-accent-dim hidden md:block">
-		<span class="dot"></span>COPYRIGHT © 2026 VINEYARD.RUN | <span id="id_telemetry_nodes"> <script>
-					var mail_link = document.querySelector("#id_contact_mail");
-					mail_link.text = "con" + "tact@v" + "iney" + "ard." + "r" + "un"; mail_link.href = "mailto:" + mail_link.text;
-				</script> </span>
+		<span class="dot"></span> COPYRIGHT © 2026 VINEYARD.RUN | <span id="id_contact_mail"> <script>
+			var mail_link = document.querySelector("#id_contact_mail");
+			mail_link.text = "con" + "tact@v" + "iney" + "ard." + "r" + "un"; mail_link.href = "mailto:" + mail_link.text;
+		</script> </span>
 	</div>
 
 	<script>
@@ -334,7 +334,7 @@
 			var REFLECTION_ALPHA = 0.34;
 
 			var width, height, waterY, frame, lights, shimmers;
-			var telemetry = document.getElementById('id_telemetry_nodes');
+			// var telemetry = document.getElementById('id_telemetry_nodes');
 
 			function rand(a, b) { return a + Math.random() * (b - a); }
 			function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
