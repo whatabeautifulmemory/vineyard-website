@@ -52,24 +52,15 @@
 			background: #010405;
 		}
 
-		/* -------- background layers: glyph rain (back) + node trellis (front) -------- */
-		#id_rain_canvas,
-		#id_bg_canvas {
+		/* -------- background: procedural pixel skyline -------- */
+		#id_city_canvas {
 			position: fixed;
 			inset: 0;
 			width: 100%;
 			height: 100%;
 			display: block;
-		}
-
-		#id_rain_canvas {
-			z-index: -2;
-			background: radial-gradient(ellipse 120% 90% at 50% -10%, #151023 0%, #07050b 45%, #000000 100%);
-		}
-
-		#id_bg_canvas {
 			z-index: -1;
-			background: transparent;
+			background: #010405; /* sky itself is painted in-canvas */
 		}
 
 		/* -------- CRT overlay: scanlines + vignette + faint flicker -------- */
@@ -242,8 +233,7 @@
 
 
 <body class="leading-normal tracking-normal text-gray-900">
-	<canvas id="id_rain_canvas"></canvas>
-	<canvas id="id_bg_canvas"></canvas>
+	<canvas id="id_city_canvas"></canvas>
 	<div id="id_crt_overlay"></div>
 
 	<div class="h-screen pb-14 bg-right bg-cover">
@@ -283,11 +273,8 @@
 					</h1>
 				</div>
 
-				<p class="leading-normal text-base md:text-2xl mt-6 mb-2 text-center md:text-left crt-in-late text-white">
+				<p class="leading-normal text-base md:text-2xl mt-6 mb-8 text-center md:text-left crt-in-late text-white">
 					VINEYARD.RUN is a open platform for cyber threat intelligence<br />
-				</p>
-				<p class="text-accent-dim text-xs md:text-sm mb-8 text-center md:text-left crt-in-late">
-					
 				</p>
 			</div>
 
@@ -321,297 +308,225 @@
 	</script>
 
 	<script>
-		// GLYPH RAIN: a very dim stream of katakana/digits behind the trellis —
-		// the "sea" the title dives into. Kept at low alpha so it reads as
-		// texture, not as a Matrix cosplay.
+		// PIXEL SKYLINE: a procedural night-city waterfront, reinterpreting the
+		// reference art in the site's violet palette. The unlit scene (sky,
+		// silhouettes, shore) is baked once; every light — windows, stars,
+		// shore lamps — is drawn live each render, breathing slowly with its
+		// own phase and speed. The water mirrors the composed scene, so the
+		// reflection shimmers along with the lights.
 		(function () {
-			var canvas = document.getElementById('id_rain_canvas');
+			var canvas = document.getElementById('id_city_canvas');
 			if (!canvas || !canvas.getContext) return;
 			var ctx = canvas.getContext('2d');
 			var dpr = Math.min(window.devicePixelRatio || 1, 2);
 
-			var GLYPHS = 'アイウエオカキクケコサシスセソタチツテトナニヌネノ0123456789';
-			var COL_W = 26;
-			var ROW_H = 22;
-			var TRAIL = 9;
-			var width, height, cols, rows, grid, heads, frame;
+			var base = document.createElement('canvas');   // unlit scene, baked once
+			var bctx = base.getContext('2d');
+			var scene = document.createElement('canvas');  // base + live lights, per render
+			var sctx = scene.getContext('2d');
 
-			function randomGlyph() {
-				return GLYPHS.charAt(Math.floor(Math.random() * GLYPHS.length));
+			// palette — violet-dominant, with sparse warm windows like the reference
+			var COOL = ['#b197fc', '#9d86e8', '#8672d6', '#d8ccff'];
+			var WARM = ['#e6d6a3', '#d9c188'];
+			var WARM_RATE = 0.18;
+			var REFLECTION_ALPHA = 0.34;
+
+			var width, height, waterY, frame, lights, shimmers;
+			var telemetry = document.getElementById('id_telemetry_nodes');
+
+			function rand(a, b) { return a + Math.random() * (b - a); }
+			function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+			function windowColor() { return Math.random() < WARM_RATE ? pick(WARM) : pick(COOL); }
+
+			// every light breathes: slow speed, random phase, never fully off
+			function addLight(x, y, w, h, color, baseAlpha) {
+				lights.push({
+					x: Math.round(x), y: Math.round(y), w: w, h: h,
+					color: color, base: baseAlpha,
+					phase: rand(0, Math.PI * 2), speed: rand(0.004, 0.016)
+				});
+			}
+
+			function drawSky() {
+				var g = bctx.createLinearGradient(0, 0, 0, waterY);
+				g.addColorStop(0, '#020107');
+				g.addColorStop(0.6, '#0a0616');
+				g.addColorStop(1, '#191033');
+				bctx.fillStyle = g;
+				bctx.fillRect(0, 0, width, height); // fill past waterline too; water re-tints below
+
+				var count = Math.round(width / 22);
+				for (var i = 0; i < count; i++) {
+					addLight(Math.random() * width, Math.random() * height * 0.42, 1, 1, '#d2c8ff', rand(0.25, 0.85));
+				}
+			}
+
+			// one building: silhouette baked, every lit window becomes a live light
+			function drawBuilding(x, bw, bh, layer) {
+				var top = waterY - bh;
+				bctx.fillStyle = layer.sil;
+				bctx.fillRect(Math.round(x), Math.round(top), Math.round(bw), Math.round(bh));
+
+				var litRate = rand(layer.litMin, layer.litMax);
+				var c = layer.cell;
+				for (var wy = top + c.inset; wy < waterY - c.h - 2; wy += c.py) {
+					for (var wx = x + c.inset; wx < x + bw - c.w - c.inset; wx += c.px) {
+						if (Math.random() > litRate) continue;
+						addLight(wx, wy, c.w, c.h, windowColor(), rand(0.4, 1) * layer.alpha);
+					}
+				}
+			}
+
+			function drawLayer(layer) {
+				var x = -rand(10, 40);
+				while (x < width + 20) {
+					var bw = rand(layer.wMin, layer.wMax);
+					var bh = waterY * rand(layer.hMin, layer.hMax);
+					drawBuilding(x, bw, bh, layer);
+					x += bw + rand(layer.gapMin, layer.gapMax);
+				}
+			}
+
+			// the reference's twin towers, translated into the near layer
+			function drawTwinTowers(layer) {
+				var tw = Math.max(38, Math.min(72, width * 0.045));
+				var xc = width * 0.74;
+				drawBuilding(xc - tw - 9, tw, waterY * 0.78, layer);
+				drawBuilding(xc + 9, tw, waterY * 0.74, layer);
+			}
+
+			function drawShore() {
+				// tree silhouettes along the waterline
+				bctx.fillStyle = '#05040c';
+				for (var x = -6; x < width + 6; x += rand(6, 12)) {
+					var th = rand(6, 18);
+					var twd = rand(8, 16);
+					bctx.beginPath();
+					bctx.ellipse(x, waterY - th * 0.4, twd * 0.5, th * 0.6, 0, 0, Math.PI * 2);
+					bctx.fill();
+				}
+				// sparse shore lights peeking through the trees
+				for (var lx = rand(10, 40); lx < width; lx += rand(35, 90)) {
+					addLight(lx, waterY - 3, 2, 2, Math.random() < 0.5 ? '#e6d6a3' : '#b197fc', rand(0.5, 0.9));
+				}
+			}
+
+			function buildScene() {
+				lights = [];
+				shimmers = [];
+				bctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+				bctx.imageSmoothingEnabled = false;
+				bctx.clearRect(0, 0, width, height);
+
+				drawSky();
+
+				// far -> mid -> near, so closer (darker) silhouettes overlap
+				drawLayer({
+					sil: '#0c0918', alpha: 0.45, litMin: 0.08, litMax: 0.26,
+					wMin: 34, wMax: 80, hMin: 0.20, hMax: 0.42, gapMin: 2, gapMax: 14,
+					cell: { w: 2, h: 2, px: 4, py: 4, inset: 2 }
+				});
+				var near = {
+					sil: '#070510', alpha: 1.0, litMin: 0.15, litMax: 0.50,
+					wMin: 50, wMax: 130, hMin: 0.26, hMax: 0.58, gapMin: 4, gapMax: 26,
+					cell: { w: 4, h: 3, px: 7, py: 6, inset: 3 }
+				};
+				drawLayer({
+					sil: '#0a0714', alpha: 0.7, litMin: 0.12, litMax: 0.36,
+					wMin: 40, wMax: 100, hMin: 0.24, hMax: 0.50, gapMin: 3, gapMax: 18,
+					cell: { w: 3, h: 2, px: 5, py: 5, inset: 2 }
+				});
+				drawTwinTowers(near);
+				drawLayer(near);
+
+				drawShore();
+
+				// static shimmer lines on the water, precomputed once
+				for (var i = 0; i < Math.round(width / 60); i++) {
+					shimmers.push({
+						x: Math.round(rand(0, width - 50)),
+						y: Math.round(rand(waterY + 2, height - 2)),
+						w: Math.round(rand(15, 50)),
+						a: rand(0.04, 0.10)
+					});
+				}
+
+				if (telemetry) telemetry.textContent = String(lights.length).padStart(4, '0');
+			}
+
+			function render() {
+				// 1) compose: unlit scene + breathing lights
+				sctx.setTransform(1, 0, 0, 1, 0, 0);
+				sctx.clearRect(0, 0, scene.width, scene.height);
+				sctx.drawImage(base, 0, 0);
+				sctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+				for (var i = 0; i < lights.length; i++) {
+					var t = lights[i];
+					var pulse = REDUCE_MOTION ? 0.85
+						: 0.3 + 0.7 * (0.5 + 0.5 * Math.sin(frame * t.speed + t.phase));
+					sctx.globalAlpha = t.base * pulse;
+					sctx.fillStyle = t.color;
+					sctx.fillRect(t.x, t.y, t.w, t.h);
+				}
+				sctx.globalAlpha = 1;
+
+				// 2) onscreen: scene, then its mirror in the water, then water tint
+				ctx.setTransform(1, 0, 0, 1, 0, 0);
+				ctx.clearRect(0, 0, canvas.width, canvas.height);
+				ctx.drawImage(scene, 0, 0);
+
+				var reflH = height - waterY;
+				if (reflH > 0) {
+					ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+					ctx.save();
+					ctx.globalAlpha = REFLECTION_ALPHA;
+					ctx.translate(0, waterY + reflH);
+					ctx.scale(1, -1);
+					ctx.drawImage(scene,
+						0, (waterY - reflH) * dpr, width * dpr, reflH * dpr,
+						0, 0, width, reflH);
+					ctx.restore();
+
+					var g = ctx.createLinearGradient(0, waterY, 0, height);
+					g.addColorStop(0, 'rgba(12,9,26,0.22)');
+					g.addColorStop(1, 'rgba(2,1,8,0.58)');
+					ctx.fillStyle = g;
+					ctx.fillRect(0, waterY, width, reflH);
+
+					for (var s = 0; s < shimmers.length; s++) {
+						ctx.fillStyle = 'rgba(177,151,252,' + shimmers[s].a + ')';
+						ctx.fillRect(shimmers[s].x, shimmers[s].y, shimmers[s].w, 1);
+					}
+				}
 			}
 
 			function resize() {
 				width = window.innerWidth;
 				height = window.innerHeight;
-				canvas.width = width * dpr;
-				canvas.height = height * dpr;
+				waterY = Math.round(height * 0.88);
+				frame = 0;
+				canvas.width = base.width = scene.width = width * dpr;
+				canvas.height = base.height = scene.height = height * dpr;
 				canvas.style.width = width + 'px';
 				canvas.style.height = height + 'px';
-				ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-				cols = Math.ceil(width / COL_W);
-				rows = Math.ceil(height / ROW_H) + TRAIL;
-				frame = 0;
-
-				grid = [];
-				heads = [];
-				for (var c = 0; c < cols; c++) {
-					var col = [];
-					for (var r = 0; r < rows; r++) col.push(randomGlyph());
-					grid.push(col);
-					heads.push({
-						row: Math.floor(Math.random() * rows),
-						every: 4 + Math.floor(Math.random() * 6) // frames per step; differs per column
-					});
-				}
-			}
-
-			function draw() {
-				ctx.clearRect(0, 0, width, height);
-				ctx.font = '14px "Courier New", Courier, monospace';
-				ctx.textBaseline = 'top';
-
-				for (var c = 0; c < cols; c++) {
-					var head = heads[c];
-					for (var k = 0; k < TRAIL; k++) {
-						var r = head.row - k;
-						if (r < 0) r += rows;
-						var alpha = (k === 0 ? 0.13 : 0.10) * (1 - k / TRAIL);
-						if (alpha <= 0.01) continue;
-						ctx.fillStyle = 'rgba(177,151,252,' + alpha + ')';
-						ctx.fillText(grid[c][r], c * COL_W + 4, r * ROW_H);
-					}
-				}
-			}
-
-			function step() {
-				frame++;
-				for (var c = 0; c < cols; c++) {
-					var head = heads[c];
-					if (frame % head.every === 0) {
-						head.row = (head.row + 1) % rows;
-						grid[c][head.row] = randomGlyph(); // fresh glyph at the new head
-					}
-				}
+				ctx.imageSmoothingEnabled = false;
+				sctx.imageSmoothingEnabled = false;
+				buildScene();
+				render();
 			}
 
 			function loop() {
-				step();
-				if (frame % 2 === 0) draw(); // half-rate draw: stepping feel + cheaper
+				frame++;
+				if (frame % 5 === 0) render(); // slow breathing; the scene itself is static
 				requestAnimationFrame(loop);
 			}
 
 			window.addEventListener('resize', resize);
 			resize();
-			draw();
 			if (!REDUCE_MOTION) requestAnimationFrame(loop);
 		})();
 	</script>
 
-	<script>
-		// VINEYARD: growth expressed as actual growth — new buds keep sprouting
-		// across the trellis over time, each with its own fixed size (1x-2.5x),
-		// and connect to nearby buds with tendrils as they appear. Older buds
-		// retire gracefully to make room, so the field keeps growing forever.
-		// (Nodes/edges double as the site's CTI link-analysis motif; signals
-		// occasionally pulse along the tendrils, cyberbrain-network style.)
-		(function () {
-			var canvas = document.getElementById('id_bg_canvas');
-			if (!canvas || !canvas.getContext) return;
-			var ctx = canvas.getContext('2d');
-			var dpr = Math.min(window.devicePixelRatio || 1, 2);
-			var reduceMotion = REDUCE_MOTION;
-
-			var NODE_RGB = '177,151,252'; // matches the site's accent, Mantine violet-3 (#b197fc)
-			var LINK_DIST = 260;
-			var BASE_SIZE = 2;      // "1x" reference bud size, in px
-			var GROW_FRAMES = 50;   // time for a new bud to sprout to full size
-			var FADE_FRAMES = 50;   // time for a retiring bud to fade out
-			var width, height, nodes, maxNodes, frame, spawnAt;
-			var pulses, pulseAt;
-			var telemetryNodes = document.getElementById('id_telemetry_nodes');
-
-			function makeNode() {
-				return {
-					x: Math.random() * width,
-					y: Math.random() * height,
-					vx: (Math.random() - 0.5) * 0.28,
-					vy: (Math.random() - 0.5) * 0.2 - 0.05,
-					s: BASE_SIZE * (1 + Math.random() * 1.5), // fixed size, 1x-2.5x — differs per bud
-					a: Math.random() * 0.55 + 0.25,           // fixed opacity — differs per bud
-					born: frame,
-					dying: false,
-					diedAt: 0
-				};
-			}
-
-			function resize() {
-				width = window.innerWidth;
-				height = window.innerHeight;
-				canvas.width = width * dpr;
-				canvas.height = height * dpr;
-				canvas.style.width = width + 'px';
-				canvas.style.height = height + 'px';
-				ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-				ctx.imageSmoothingEnabled = false;
-
-				maxNodes = Math.min(140, Math.max(45, Math.round((width * height) / 14000)));
-				frame = 0;
-				spawnAt = 0;
-				pulseAt = 60;
-				nodes = [];
-				pulses = [];
-
-				// seed part of the field so it isn't empty on load; the rest sprouts in over time.
-				// (with reduced motion, seed the whole field at once, fully grown, and never animate.)
-				var seedCount = reduceMotion ? maxNodes : Math.round(maxNodes * 0.55);
-				for (var i = 0; i < seedCount; i++) {
-					var n = makeNode();
-					n.born = -GROW_FRAMES; // already fully grown
-					nodes.push(n);
-				}
-			}
-
-			function scaleOf(n) {
-				if (n.dying) {
-					return Math.max(0, 1 - (frame - n.diedAt) / FADE_FRAMES);
-				}
-				return Math.min(1, Math.max(0, (frame - n.born) / GROW_FRAMES));
-			}
-
-			function spawnPulse() {
-				// pick a random grown node, then a random neighbor within link range
-				if (nodes.length < 2) return;
-				var a = nodes[Math.floor(Math.random() * nodes.length)];
-				if (scaleOf(a) < 1) return;
-				var candidates = [];
-				for (var i = 0; i < nodes.length; i++) {
-					var b = nodes[i];
-					if (b === a || scaleOf(b) < 1) continue;
-					var dx = a.x - b.x, dy = a.y - b.y;
-					if (dx * dx + dy * dy < LINK_DIST * LINK_DIST) candidates.push(b);
-				}
-				if (!candidates.length) return;
-				pulses.push({
-					a: a,
-					b: candidates[Math.floor(Math.random() * candidates.length)],
-					t: 0
-				});
-			}
-
-			function step() {
-				frame++;
-
-				for (var i = nodes.length - 1; i >= 0; i--) {
-					var n = nodes[i];
-					n.x += n.vx;
-					n.y += n.vy;
-					if (n.x < -20) n.x = width + 20;
-					if (n.x > width + 20) n.x = -20;
-					if (n.y < -20) n.y = height + 20;
-					if (n.y > height + 20) n.y = -20;
-					if (n.dying && scaleOf(n) <= 0) nodes.splice(i, 1);
-				}
-
-				// periodically sprout a new bud, retiring the oldest once the trellis is full
-				if (frame >= spawnAt) {
-					if (nodes.length < maxNodes) {
-						nodes.push(makeNode());
-					} else {
-						var oldest = null;
-						for (var k = 0; k < nodes.length; k++) {
-							if (!nodes[k].dying && (oldest === null || nodes[k].born < oldest.born)) oldest = nodes[k];
-						}
-						if (oldest) { oldest.dying = true; oldest.diedAt = frame; }
-						nodes.push(makeNode());
-					}
-					spawnAt = frame + 25 + Math.random() * 35;
-				}
-
-				// occasionally send a signal along a tendril
-				if (frame >= pulseAt) {
-					spawnPulse();
-					pulseAt = frame + 70 + Math.random() * 110;
-				}
-				for (var p = pulses.length - 1; p >= 0; p--) {
-					pulses[p].t += 0.025;
-					if (pulses[p].t >= 1 || scaleOf(pulses[p].a) <= 0 || scaleOf(pulses[p].b) <= 0) {
-						pulses.splice(p, 1);
-					}
-				}
-
-				if (telemetryNodes && frame % 30 === 0) {
-					telemetryNodes.textContent = String(nodes.length).padStart(3, '0');
-				}
-			}
-
-			function drawCross(x, y, s, style) {
-				// pixel cross (+) marker instead of a plain square — HUD-ish
-				var t = Math.max(1, Math.round(s / 3));
-				var len = Math.max(2, Math.round(s));
-				ctx.fillStyle = style;
-				ctx.fillRect(Math.round(x - len / 2), Math.round(y - t / 2), len, t);
-				ctx.fillRect(Math.round(x - t / 2), Math.round(y - len / 2), t, len);
-			}
-
-			function draw() {
-				ctx.clearRect(0, 0, width, height);
-
-				// tendrils connecting nearby buds — they grow in and fade out with their buds
-				for (var i = 0; i < nodes.length; i++) {
-					for (var j = i + 1; j < nodes.length; j++) {
-						var a = nodes[i], b = nodes[j];
-						var dx = a.x - b.x, dy = a.y - b.y;
-						var dist = Math.sqrt(dx * dx + dy * dy);
-						if (dist < LINK_DIST) {
-							var linkScale = Math.min(scaleOf(a), scaleOf(b));
-							if (linkScale <= 0) continue;
-							var alpha = 0.32 * (1 - dist / LINK_DIST) * linkScale;
-							ctx.strokeStyle = 'rgba(' + NODE_RGB + ',' + alpha + ')';
-							ctx.lineWidth = 1.4;
-							ctx.beginPath();
-							ctx.moveTo(a.x, a.y);
-							ctx.lineTo(b.x, b.y);
-							ctx.stroke();
-						}
-					}
-				}
-
-				// signals travelling along tendrils
-				for (var pp = 0; pp < pulses.length; pp++) {
-					var pu = pulses[pp];
-					var px = pu.a.x + (pu.b.x - pu.a.x) * pu.t;
-					var py = pu.a.y + (pu.b.y - pu.a.y) * pu.t;
-					var fade = Math.sin(pu.t * Math.PI); // ease in-out brightness
-					ctx.fillStyle = 'rgba(' + NODE_RGB + ',' + (0.9 * fade) + ')';
-					ctx.fillRect(Math.round(px) - 1, Math.round(py) - 1, 3, 3);
-				}
-
-				// buds — each has its own fixed size (1x-2.5x) and opacity, no pulsing once grown
-				for (var kk = 0; kk < nodes.length; kk++) {
-					var nn = nodes[kk];
-					var sc = scaleOf(nn);
-					if (sc <= 0) continue;
-					var s = nn.s * sc;
-					drawCross(nn.x, nn.y, s * 1.6, 'rgba(' + NODE_RGB + ',' + (nn.a * sc) + ')');
-				}
-			}
-
-			function loop() {
-				step();
-				draw();
-				requestAnimationFrame(loop);
-			}
-
-			window.addEventListener('resize', resize);
-			resize();
-			draw();
-			if (telemetryNodes) telemetryNodes.textContent = String(nodes.length).padStart(3, '0');
-			if (!reduceMotion) {
-				requestAnimationFrame(loop);
-			}
-		})();
-	</script>
 
 	<script>
 		// BOOT SEQUENCE + TITLE DECODE + OCCASIONAL GLITCH
