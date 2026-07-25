@@ -298,10 +298,12 @@
 
 	<!-- telemetry HUD -->
 	<div id="id_telemetry" class="text-accent-dim hidden md:block">
-		<span class="dot"></span> COPYRIGHT © 2026 VINEYARD.RUN | <span id="id_contact_mail">contact ~ at ~ vineyard ~ dot ~ run</span>
+		<span class="dot"></span> COPYRIGHT © 2026 VINEYARD.RUN | <a id="id_contact_mail" href="#">contact ~ at ~ vineyard ~ dot ~ run</a>
 		<script>
 			var mail_link = document.querySelector("#id_contact_mail");
-			mail_link.text = "con" + "tact@v" + "iney" + "ard." + "r" + "un"; mail_link.href = "mailto:" + mail_link.text;
+			var mail_addr = "con" + "tact@v" + "iney" + "ard." + "r" + "un";
+			mail_link.textContent = mail_addr;
+			mail_link.href = "mailto:" + mail_addr;
 		</script>
 	</div>
 
