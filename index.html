@@ -183,6 +183,70 @@
 			}
 		}
 
+		/* -------- CTA buttons: web app / desktop client -------- */
+		.btn-cta {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.5rem;
+			padding: 0.65rem 1.25rem;
+			font-size: 0.875rem;
+			letter-spacing: 0.08em;
+			text-decoration: none;
+			border: 1px solid #9775fa;
+			transition: transform .08s steps(2), box-shadow .08s steps(2),
+				background-color .12s, color .12s;
+			position: relative;
+		}
+
+		@media (min-width: 768px) {
+			.btn-cta {
+				font-size: 1rem;
+				padding: 0.75rem 1.5rem;
+			}
+		}
+
+		/* primary: filled, hard pixel shadow */
+		.btn-cta-primary {
+			background: #9775fa;
+			color: #010405;
+			box-shadow: 4px 4px 0 rgba(151, 117, 250, 0.35);
+		}
+
+		.btn-cta-primary:hover {
+			background: #b197fc;
+			border-color: #b197fc;
+			transform: translate(-2px, -2px);
+			box-shadow: 6px 6px 0 rgba(151, 117, 250, 0.35);
+		}
+
+		.btn-cta-primary:active {
+			transform: translate(2px, 2px);
+			box-shadow: 0 0 0 rgba(151, 117, 250, 0.35);
+		}
+
+		/* secondary: outlined, glows on hover */
+		.btn-cta-ghost {
+			background: rgba(151, 117, 250, 0.06);
+			color: #b197fc;
+		}
+
+		.btn-cta-ghost:hover {
+			background: rgba(151, 117, 250, 0.16);
+			color: #d8ccff;
+			border-color: #b197fc;
+			box-shadow: 0 0 14px rgba(151, 117, 250, 0.35),
+				inset 0 0 8px rgba(151, 117, 250, 0.12);
+		}
+
+		.btn-cta .btn-glyph {
+			font-size: 0.8em;
+			opacity: 0.9;
+		}
+
+		.btn-cta-note {
+			letter-spacing: 0.06em;
+		}
+
 		/* -------- boot line above the title -------- */
 		#id_bootline {
 			min-height: 1.5rem;
@@ -276,6 +340,23 @@
 				<p class="leading-normal text-base md:text-2xl mt-6 mb-8 text-center md:text-left crt-in-late text-white">
 					VINEYARD.RUN empowers CTI analysts to accelerate investigations by revealing hidden relationships and turning fragmented threat intelligence into actionable insights.<br />
 				</p>
+
+				<!-- CTA: web app + desktop client -->
+				<div class="w-full fade-in">
+					<div class="flex flex-wrap gap-4 justify-center md:justify-start">
+						<a class="btn-cta btn-cta-primary" href="https://app.vineyard.run"
+							target="_blank" rel="noopener noreferrer">
+							<span class="btn-glyph">&#9656;</span> LAUNCH WEB APP
+						</a>
+						<a class="btn-cta btn-cta-ghost" href="https://github.com/whatabeautifulmemory/vineyard-website/releases"
+							target="_blank" rel="noopener noreferrer">
+							<span class="btn-glyph">&#8681;</span> DESKTOP CLIENT
+						</a>
+					</div>
+					<p class="btn-cta-note text-accent-dim text-xs mt-3 text-center md:text-left">
+						&gt; runs in your browser &mdash; or grab the desktop build from GitHub releases
+					</p>
+				</div>
 			</div>
 
 			<!--Right Col-->
