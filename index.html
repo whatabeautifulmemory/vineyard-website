@@ -361,7 +361,11 @@
 							<rect x="1.1" y="18.7" width="4.2" height="4.2" rx="1" fill="#ffffff" />
 						</g>
 					</svg>
-					VINEYARD
+					<!-- The NeoDunggeunmo pixel font's glyph ink sits high in its own line box
+					     (measured: ~12.5% empty above, ~25% empty below, at font-size), unlike the
+					     icon which fills its box edge to edge — left as CSS line-height centering
+					     alone, the wordmark reads as sitting above the icon's visual center. -->
+					<span class="inline-block" style="transform: translateY(2px)">VINEYARD</span>
 				</a>
 
 				<div class="flex w-1/2 justify-end content-center">
