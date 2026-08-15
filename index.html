@@ -247,6 +247,137 @@
 			letter-spacing: 0.06em;
 		}
 
+		/* -------- install dialog --------
+		   A native <dialog>, which is the whole reason this is ~40 lines of CSS and no JS
+		   scaffolding: Esc, the backdrop, the top layer and focus containment are the element's
+		   job, not ours. */
+		#id_install::backdrop {
+			background: rgba(1, 4, 5, 0.82);
+		}
+
+		#id_install {
+			border: 1px solid #9775fa;
+			background: #06040f;
+			color: #d8ccff;
+			padding: 0;
+			max-width: 40rem;
+			width: calc(100% - 2rem);
+			box-shadow: 6px 6px 0 rgba(151, 117, 250, 0.25);
+		}
+
+		#id_install .dlg-head {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 1rem;
+			padding: 0.9rem 1.1rem;
+			border-bottom: 1px solid rgba(151, 117, 250, 0.3);
+		}
+
+		#id_install .dlg-title {
+			font-size: 0.8rem;
+			letter-spacing: 0.14em;
+			color: #b197fc;
+		}
+
+		#id_install .dlg-x {
+			border: 1px solid rgba(151, 117, 250, 0.35);
+			background: transparent;
+			color: #b197fc;
+			cursor: pointer;
+			line-height: 1;
+			padding: 0.15rem 0.45rem;
+		}
+
+		#id_install .dlg-x:hover { background: rgba(151, 117, 250, 0.16); }
+
+		/* OS tabs. All three always visible — detection picks which one OPENS, it never hides
+		   the others, because the guess is a heuristic and people download for other machines. */
+		#id_install .os-tabs {
+			display: flex;
+			gap: 0.4rem;
+			padding: 0.9rem 1.1rem 0;
+		}
+
+		#id_install .os-tab {
+			border: 1px solid rgba(151, 117, 250, 0.3);
+			background: transparent;
+			color: rgba(177, 151, 252, 0.6);
+			font-size: 0.72rem;
+			letter-spacing: 0.1em;
+			padding: 0.35rem 0.7rem;
+			cursor: pointer;
+		}
+
+		#id_install .os-tab:hover { color: #d8ccff; }
+
+		#id_install .os-tab[aria-selected="true"] {
+			color: #010405;
+			background: #9775fa;
+			border-color: #9775fa;
+		}
+
+		#id_install .os-pane { padding: 1.1rem; font-size: 0.78rem; line-height: 1.7; }
+		#id_install .os-pane[hidden] { display: none; }
+
+		#id_install .step-label {
+			color: #b197fc;
+			font-size: 0.7rem;
+			letter-spacing: 0.1em;
+			margin: 0 0 0.35rem;
+		}
+
+		#id_install .step + .step { margin-top: 1.1rem; }
+
+		#id_install .cmd {
+			display: flex;
+			align-items: stretch;
+			border: 1px solid rgba(151, 117, 250, 0.3);
+			background: rgba(151, 117, 250, 0.06);
+		}
+
+		#id_install .cmd code {
+			flex: 1;
+			padding: 0.5rem 0.6rem;
+			overflow-x: auto;
+			white-space: nowrap;
+			color: #d8ccff;
+			font-size: 0.74rem;
+		}
+
+		#id_install .cmd button {
+			border: 0;
+			border-left: 1px solid rgba(151, 117, 250, 0.3);
+			background: transparent;
+			color: #b197fc;
+			cursor: pointer;
+			padding: 0 0.7rem;
+			font-size: 0.68rem;
+			letter-spacing: 0.08em;
+		}
+
+		#id_install .cmd button:hover { background: rgba(151, 117, 250, 0.16); }
+
+		/* The unsigned-build warning. Amber, matching the beta tag — this is the single most
+		   common reason a download never becomes a running app, so it is not a footnote. */
+		#id_install .warn {
+			border: 1px solid rgba(230, 214, 163, 0.4);
+			background: rgba(230, 214, 163, 0.07);
+			color: #e6d6a3;
+			padding: 0.5rem 0.7rem;
+			font-size: 0.72rem;
+			line-height: 1.6;
+		}
+
+		#id_install .dlg-foot {
+			padding: 0.8rem 1.1rem;
+			border-top: 1px solid rgba(151, 117, 250, 0.3);
+			font-size: 0.7rem;
+			color: rgba(177, 151, 252, 0.55);
+		}
+
+		#id_install a { color: #b197fc; }
+
 		/* -------- beta status tag -------- */
 		.beta-tag {
 			display: inline-flex;
@@ -419,13 +550,17 @@
 							target="_blank" rel="noopener noreferrer">
 							<span class="btn-glyph">&#9656;</span> LAUNCH WEB APP
 						</a>
-						<a class="btn-cta btn-cta-ghost" href="https://github.com/whatabeautifulmemory/vineyard-website/releases"
-							target="_blank" rel="noopener noreferrer">
+						<!-- Opens the install dialog rather than linking straight to the GitHub
+						     releases page. That page lists three files, two of them for macOS
+						     (the .zip is Homebrew's, not a human's), says nothing about the builds
+						     being unsigned, and offers nothing at all to a Linux or Intel-Mac
+						     visitor. It is still one click away at the foot of the dialog. -->
+						<button type="button" class="btn-cta btn-cta-ghost" id="id_install_open">
 							<span class="btn-glyph">&#8681;</span> DESKTOP CLIENT
-						</a>
+						</button>
 					</div>
 					<p class="btn-cta-note text-accent-dim text-xs mt-3 text-center md:text-left">
-						&gt; runs in your browser &mdash; or grab the desktop build from GitHub releases. things may break while we test.
+						&gt; runs in your browser &mdash; or install the desktop client for macOS or Windows. things may break while we test.
 					</p>
 				</div>
 			</div>
@@ -433,6 +568,92 @@
 			<!--Right Col-->
 			<div class="w-full xl:w-3/5 py-6 overflow-y-hidden">
 			</div>
+
+			<!-- Install dialog. Detection chooses the OPEN tab and nothing else — every option
+			     stays reachable, because platform sniffing is a guess and downloading on one
+			     machine for another is ordinary. -->
+			<dialog id="id_install" aria-labelledby="id_install_title">
+				<div class="dlg-head">
+					<span class="dlg-title" id="id_install_title">&gt; INSTALL DESKTOP CLIENT</span>
+					<button type="button" class="dlg-x" id="id_install_close" aria-label="Close">&#10005;</button>
+				</div>
+
+				<div class="os-tabs" role="tablist" aria-label="Operating system">
+					<button type="button" class="os-tab" role="tab" id="tab-mac" aria-controls="pane-mac" aria-selected="true">macOS</button>
+					<button type="button" class="os-tab" role="tab" id="tab-win" aria-controls="pane-win" aria-selected="false">WINDOWS</button>
+					<button type="button" class="os-tab" role="tab" id="tab-linux" aria-controls="pane-linux" aria-selected="false">LINUX</button>
+				</div>
+
+				<div class="os-pane" role="tabpanel" id="pane-mac" aria-labelledby="tab-mac">
+					<!-- First, and that ordering is the whole recommendation — it needs no label
+					     saying so. It is also the path that sidesteps Gatekeeper (a curl download
+					     carries no quarantine attribute), which is why the .dmg below is the one
+					     carrying a warning and this is not. -->
+					<div class="step">
+						<p class="step-label">USING CLI</p>
+						<div class="cmd">
+							<code>curl -fsSL https://vineyard.run/install.sh | bash</code>
+							<button type="button" data-copy>COPY</button>
+						</div>
+					</div>
+
+					<div class="step">
+						<p class="step-label">HOMEBREW</p>
+						<div class="cmd">
+							<code>brew install --cask Vineyard-Intelligence/vineyard/vineyard</code>
+							<button type="button" data-copy>COPY</button>
+						</div>
+					</div>
+
+					<div class="step">
+						<p class="step-label">OR DOWNLOAD THE DISK IMAGE</p>
+						<p style="margin:0 0 .5rem">
+							<a href="https://github.com/whatabeautifulmemory/vineyard-website/releases/latest/download/Vineyard-mac-arm64.dmg">Vineyard-mac-arm64.dmg</a>
+							&mdash; Apple Silicon only (M1 and later).
+						</p>
+						<p class="warn">
+							UNSIGNED BUILD. Opening the .dmg normally, macOS will refuse it
+							("cannot be verified"). Right-click the app &rarr; Open &rarr; Open.
+							The install script above avoids this entirely.
+						</p>
+					</div>
+				</div>
+
+				<div class="os-pane" role="tabpanel" id="pane-win" aria-labelledby="tab-win" hidden>
+					<div class="step">
+						<p class="step-label">DOWNLOAD THE INSTALLER</p>
+						<p style="margin:0 0 .5rem">
+							<a href="https://github.com/whatabeautifulmemory/vineyard-website/releases/latest/download/Vineyard-win-x64-setup.exe">Vineyard-win-x64-setup.exe</a>
+							&mdash; 64-bit Windows.
+						</p>
+						<p class="warn">
+							UNSIGNED BUILD. SmartScreen will warn on first run:
+							More info &rarr; Run anyway.
+						</p>
+					</div>
+				</div>
+
+				<div class="os-pane" role="tabpanel" id="pane-linux" aria-labelledby="tab-linux" hidden>
+					<div class="step">
+						<!-- Saying "there is no build" is the point of this pane. Sending a Linux
+						     visitor to a releases page holding two macOS files and a .exe answers
+						     nothing and looks like the download is broken. -->
+						<p class="step-label">NO DESKTOP BUILD YET</p>
+						<p style="margin:0 0 .5rem">
+							The desktop client ships for macOS (Apple Silicon) and Windows only.
+							On Linux, use the web app &mdash; it is the same application.
+						</p>
+						<p style="margin:0">
+							<a href="https://app.vineyard.run" target="_blank" rel="noopener noreferrer">app.vineyard.run &rarr;</a>
+						</p>
+					</div>
+				</div>
+
+				<div class="dlg-foot">
+					&gt; all files and checksums:
+					<a href="https://github.com/whatabeautifulmemory/vineyard-website/releases" target="_blank" rel="noopener noreferrer">GitHub releases</a>
+				</div>
+			</dialog>
 
 			<!--Footer-->
 			<!-- <div class="w-full pt-16 pb-6 text-sm text-center md:text-left fade-in">
@@ -463,6 +684,84 @@
 	<script>
 		// shared motion preference
 		var REDUCE_MOTION = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+	</script>
+
+	<script>
+		// INSTALL DIALOG.
+		//
+		// Deliberately small. <dialog> already owns Esc, the backdrop, the top layer and focus
+		// containment, so the only things left are: which tab opens, switching tabs, and copy.
+		(function () {
+			var dlg = document.getElementById('id_install');
+			if (!dlg || !dlg.showModal) return; // very old browser: the GitHub link below still works
+			var open = document.getElementById('id_install_open');
+			var tabs = [].slice.call(dlg.querySelectorAll('.os-tab'));
+
+			function select(tab) {
+				tabs.forEach(function (t) {
+					var on = t === tab;
+					t.setAttribute('aria-selected', on ? 'true' : 'false');
+					document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
+				});
+			}
+
+			// A GUESS, and treated as one: it picks the tab that opens and never removes the
+			// others. `userAgentData.platform` where it exists, `navigator.platform` after —
+			// deprecated, but still the only signal in Safari and Firefox. Anything unrecognised
+			// falls through to macOS, which is the only platform with a one-line install.
+			function detect() {
+				var p = ((navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || '').toLowerCase();
+				var ua = (navigator.userAgent || '').toLowerCase();
+				if (p.indexOf('win') === 0 || ua.indexOf('windows') > -1) return 'win';
+				// Android reports "linux" in the UA, so it has to be excluded explicitly or every
+				// Android visitor lands on a pane telling them to use a desktop build that is not
+				// for them either.
+				if ((p.indexOf('linux') > -1 || ua.indexOf('linux') > -1) && ua.indexOf('android') === -1) return 'linux';
+				return 'mac';
+			}
+
+			open.addEventListener('click', function () {
+				select(document.getElementById('tab-' + detect()));
+				dlg.showModal();
+			});
+			document.getElementById('id_install_close').addEventListener('click', function () { dlg.close(); });
+
+			// Click on the backdrop closes. The dialog's own box is a child, so a click INSIDE it
+			// has that child as the target; only the backdrop reports the dialog itself.
+			dlg.addEventListener('click', function (e) { if (e.target === dlg) dlg.close(); });
+
+			tabs.forEach(function (t) {
+				t.addEventListener('click', function () { select(t); });
+			});
+
+			dlg.addEventListener('click', function (e) {
+				var btn = e.target.closest && e.target.closest('[data-copy]');
+				if (!btn) return;
+				var text = btn.parentNode.querySelector('code').textContent;
+				// One reset path for BOTH outcomes. The first version only restored the label on
+				// success, so a single failure left the button reading "COPY FAILED" for the rest
+				// of the page's life — including on the next click, which may well have worked.
+				var say = function (word) {
+					btn.textContent = word;
+					setTimeout(function () { btn.textContent = 'COPY'; }, 1400);
+				};
+				var done = function () { say('COPIED'); };
+				var failed = function () { say('COPY FAILED'); };
+				// clipboard API needs a secure context; file:// and plain http get the fallback.
+				if (navigator.clipboard && window.isSecureContext) {
+					navigator.clipboard.writeText(text).then(done, failed);
+					return;
+				}
+				var ta = document.createElement('textarea');
+				ta.value = text;
+				ta.style.position = 'fixed';
+				ta.style.opacity = '0';
+				document.body.appendChild(ta);
+				ta.select();
+				try { document.execCommand('copy'); done(); } catch (err) { failed(); }
+				document.body.removeChild(ta);
+			});
+		})();
 	</script>
 
 	<script>
@@ -613,6 +912,9 @@
 			}
 
 			function render() {
+				// Nothing to compose while the viewport reports zero — see resize() below. Without
+				// this the loop keeps calling in on a 0x0 `base` and throws once a frame.
+				if (!width || !height || !lights) return;
 				// 1) compose: unlit scene + breathing lights
 				sctx.setTransform(1, 0, 0, 1, 0, 0);
 				sctx.clearRect(0, 0, scene.width, scene.height);
@@ -659,6 +961,13 @@
 			}
 
 			function resize() {
+				// A zero-sized viewport THROWS rather than doing nothing: `canvas.width = 0` makes
+				// `base` a 0x0 canvas and drawImage raises InvalidStateError, which kills the frame
+				// loop for the rest of the page's life. Reached on a device-emulation resize and
+				// any layout that momentarily reports 0 — measured here in the browser console.
+				// Bailing leaves the CSS background (#010405, the same night sky) showing, and the
+				// resize listener fires again the moment there is a size.
+				if (!window.innerWidth || !window.innerHeight) return;
 				width = window.innerWidth;
 				height = window.innerHeight;
 				waterY = Math.round(height * 0.88);
