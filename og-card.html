@@ -45,7 +45,7 @@
   }
   .card { position: relative; z-index: 1; height: 100%; padding: 74px 80px; display: flex; flex-direction: column; }
   .brand { display: flex; align-items: center; gap: 22px; }
-  .brand svg { width: 62px; height: 62px; }
+  .brand img { width: 62px; height: 62px; }
   .brand .word { font-size: 46px; color: #b197fc; letter-spacing: 2px; transform: translateY(3px); }
   .spacer { flex: 1; }
   .kicker { font-size: 22px; color: #9775fa; letter-spacing: 3px; margin-bottom: 18px; }
@@ -57,19 +57,11 @@
 <body>
   <div class="card">
     <div class="brand">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <g stroke-linejoin="round">
-          <line x1="22" y1="5" x2="22" y2="2" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round"/>
-          <line x1="22" y1="2" x2="18" y2="6" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round"/>
-          <line x1="14.6" y1="3.97" x2="20.03" y2="9.4" stroke="#ffffff" stroke-width="1.1" stroke-linecap="round"/>
-          <line x1="14.6" y1="3.97" x2="7.18" y2="5.95" stroke="#ffffff" stroke-width="1.1" stroke-linecap="round"/>
-          <line x1="7.18" y1="5.95" x2="3.2" y2="20.8" stroke="#ffffff" stroke-width="1.1" stroke-linecap="round"/>
-          <line x1="20.03" y1="9.4" x2="3.2" y2="20.8" stroke="#ffffff" stroke-width="1.1" stroke-linecap="round"/>
-          <rect x="15.95" y="14.72" width="4.2" height="4.2" rx="1" fill="#ffffff"/>
-          <rect x="8.52" y="16.7" width="4.2" height="4.2" rx="1" fill="#ffffff"/>
-          <rect x="1.1" y="18.7" width="4.2" height="4.2" rx="1" fill="#ffffff"/>
-        </g>
-      </svg>
+      <!-- The mark, as a file. Do not paste its geometry in here: the first version of this
+           card did, dropped five of the eight nodes, mis-anchored an edge, and shipped a
+           lattice that was not the logo. logo-white.svg is written by
+           desktop/scripts/gen-icon.mjs, the one definition of the mark. -->
+      <img src="logo-white.svg" alt="">
       <span class="word">VINEYARD</span>
     </div>
 
