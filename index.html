@@ -12,6 +12,31 @@
 	<meta name="description" content="Open Cyber Threat Intelligence analysis platform. intelligence to knowledge, knowledge to wisdom!">
 	<meta name="keywords" content="CTI, Threat Intelligence">
 
+	<!-- Link preview (X/Twitter, Slack, Discord, KakaoTalk, iMessage). One card for the whole
+	     site, deliberately: og.png is a static 2400x1260 render of this page's own hero, not a
+	     per-URL card. Per-URL cards would need a crawler to render a route, and the only routes
+	     worth previewing on app.vineyard.run are behind a login and hold case data — a preview
+	     that leaked a case name into a tweet would be an incident, not a feature.
+	     og.png is a build artifact of og-card.html, which sits next to it so the card can be
+	     regenerated rather than reverse-engineered — the one command is in that file's header.
+	     app.vineyard.run and docs.vineyard.run point at THIS copy on purpose: the app must not
+	     carry its own, because the same built output is packed into the desktop app, where a
+	     600 KB image for a tag no crawler will ever read is dead weight.
+	     Absolute URLs are required here: crawlers resolve these without a base. -->
+	<meta property="og:type" content="website">
+	<meta property="og:site_name" content="VINEYARD">
+	<meta property="og:url" content="https://vineyard.run/">
+	<meta property="og:title" content="VINEYARD :: OPEN CTI ANALYSIS PLATFORM">
+	<meta property="og:description" content="Reveal hidden relationships and turn fragmented threat intelligence into actionable insight.">
+	<meta property="og:image" content="https://vineyard.run/og.png">
+	<meta property="og:image:width" content="2400">
+	<meta property="og:image:height" content="1260">
+	<meta property="og:image:alt" content="VINEYARD — open CTI analysis platform">
+	<meta name="twitter:card" content="summary_large_image">
+	<meta name="twitter:title" content="VINEYARD :: OPEN CTI ANALYSIS PLATFORM">
+	<meta name="twitter:description" content="Reveal hidden relationships and turn fragmented threat intelligence into actionable insight.">
+	<meta name="twitter:image" content="https://vineyard.run/og.png">
+
 	<link rel="stylesheet" href="https://unpkg.com/tailwindcss@2.2.19/dist/tailwind.min.css">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/neodgm/neodgm-webfont@main/neodgm_code/style.css">
 
