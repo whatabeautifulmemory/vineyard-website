@@ -13,7 +13,7 @@
 # The xattr strip below is a belt-and-suspenders step, not the mechanism.
 #
 # Usage:
-#   curl -fsSL https://whatabeautifulmemory.github.io/vineyard-website/install.sh | bash
+#   curl -fsSL https://vineyard.run/install.sh | bash
 #
 
 set -euo pipefail
