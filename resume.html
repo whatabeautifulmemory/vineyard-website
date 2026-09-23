@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>YONG-HYUN KIM :: RESUME</title>
+	<meta charset="UTF-8">
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+	<meta name="format-detection" content="telephone=no" />
+	<meta name="description" content="Yong-Hyun Kim — Cyber Security Analyst, Financial Security Institute (FSI), Korea. CTI, detection engineering, digital forensics, incident response.">
+	<meta name="robots" content="noindex">
+
+	<link rel="stylesheet" href="https://unpkg.com/tailwindcss@2.2.19/dist/tailwind.min.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/neodgm/neodgm-webfont@main/neodgm_code/style.css">
+
+	<style type="text/css">
+		/* Down to "resume panels", this is index.html's own CSS, copied rather than shared so the
+		   landing page stays a single self-contained file. Change it there first, then here. */
+		* {
+			font-family: 'NeoDunggeunmo Code', 'D2 Coding ligature', 'D2 Coding', 'Dina', 'Ubuntu Mono', 'Hermit', 'Anonymous Pro', 'Courier New', Courier, monospace;
+		}
+
+		::-moz-selection { background: rgba(151, 117, 250, 0.4); }
+		::selection { background: rgba(151, 117, 250, 0.4); }
+
+		.text-accent { color: #b197fc; }
+		.hover-accent-dark:hover { color: #845ef7; }
+		.text-logo { color: #9775fa; }
+		.text-accent-dim { color: rgba(177, 151, 252, 0.55); }
+
+		body {
+			margin: 0;
+			background: #010405;
+		}
+
+		#id_city_canvas {
+			position: fixed;
+			inset: 0;
+			width: 100%;
+			height: 100%;
+			display: block;
+			z-index: -1;
+			background: #010405;
+		}
+
+		#id_crt_overlay {
+			position: fixed;
+			inset: 0;
+			pointer-events: none;
+			z-index: 50;
+			background:
+				repeating-linear-gradient(0deg,
+					rgba(0, 0, 0, 0.16) 0px,
+					rgba(0, 0, 0, 0.16) 1px,
+					transparent 1px,
+					transparent 3px),
+				radial-gradient(ellipse 100% 100% at 50% 50%,
+					transparent 60%,
+					rgba(1, 2, 8, 0.45) 100%);
+			animation: crt-flicker 4s steps(60) infinite;
+		}
+
+		@keyframes crt-flicker {
+			0%, 100% { opacity: 1; }
+			92% { opacity: 1; }
+			93% { opacity: .82; }
+			94% { opacity: 1; }
+			97% { opacity: .9; }
+			98% { opacity: 1; }
+		}
+
+		@keyframes cursor-blink { 0% { opacity: 0; } }
+
+		#id_title {
+			filter: drop-shadow(-2px 0 0 #111) drop-shadow(2px 0 0 #111) drop-shadow(0 -2px 0 #111) drop-shadow(0 2px 0 #111);
+		}
+
+		#id_title_cursor {
+			display: inline-block;
+			animation: cursor-blink 1.0s steps(2) infinite;
+		}
+
+		#id_title_frame {
+			position: relative;
+			padding: 1.25rem 1.25rem 1.25rem 1.25rem;
+		}
+
+		#id_title_frame::before,
+		#id_title_frame::after {
+			content: "";
+			position: absolute;
+			width: 22px;
+			height: 22px;
+			opacity: 0.7;
+		}
+
+		#id_title_frame::before {
+			top: 0;
+			left: 0;
+			border-top: 1px solid #9775fa;
+			border-left: 1px solid #9775fa;
+		}
+
+		#id_title_frame::after {
+			bottom: 0;
+			right: 0;
+			border-bottom: 1px solid #9775fa;
+			border-right: 1px solid #9775fa;
+		}
+
+		.crt-in { animation: crt-in .9s steps(1) both; }
+
+		/* Same animations as the landing page, earlier delays: "> whoami" types and the name
+		   decodes in ~0.8s, against ~2s for the landing page's longer boot line. */
+		.crt-in-late { animation: crt-in .9s steps(1) .6s both; }
+
+		@keyframes crt-in {
+			0% { opacity: 0; }
+			12% { opacity: .85; }
+			18% { opacity: .15; }
+			30% { opacity: 1; }
+			36% { opacity: .45; }
+			48% { opacity: 1; }
+			100% { opacity: 1; }
+		}
+
+		.fade-in { animation: fade-in 1.0s cubic-bezier(.39, .575, .565, 1.0) .9s both; }
+
+		@keyframes fade-in {
+			0% { opacity: 0; }
+			100% { opacity: 1; }
+		}
+
+		.glitching { animation: rgb-split .22s steps(2) 1; }
+
+		@keyframes rgb-split {
+			0% {
+				text-shadow: 2px 0 rgba(255, 0, 200, 0.75), -2px 0 rgba(0, 220, 255, 0.75);
+				transform: translateX(1px);
+			}
+			50% {
+				text-shadow: -2px 0 rgba(255, 0, 200, 0.75), 2px 0 rgba(0, 220, 255, 0.75);
+				transform: translateX(-1px);
+			}
+			100% {
+				text-shadow: none;
+				transform: none;
+			}
+		}
+
+		#id_bootline {
+			min-height: 1.5rem;
+			letter-spacing: 0.05em;
+		}
+
+		/* -------- resume panels --------
+		   The install dialog's panel (1px violet edge, #06040f, hard offset shadow, "> TITLE" head
+		   bar) plus the title frame's corner brackets. Translucent so the skyline still shows
+		   through; no blur and no rounding, like the rest of the site. Not clickable, so no
+		   hover state. */
+		.tile {
+			position: relative;
+			border: 1px solid rgba(151, 117, 250, 0.35);
+			background: rgba(6, 4, 15, 0.8);
+			box-shadow: 6px 6px 0 rgba(151, 117, 250, 0.18);
+		}
+
+		.tile::before,
+		.tile::after {
+			content: "";
+			position: absolute;
+			width: 14px;
+			height: 14px;
+			pointer-events: none;
+		}
+
+		.tile::before {
+			top: -1px;
+			left: -1px;
+			border-top: 1px solid #9775fa;
+			border-left: 1px solid #9775fa;
+		}
+
+		.tile::after {
+			bottom: -1px;
+			right: -1px;
+			border-bottom: 1px solid #9775fa;
+			border-right: 1px solid #9775fa;
+		}
+
+		.tile-title {
+			padding: 0.9rem 1.1rem;
+			border-bottom: 1px solid rgba(151, 117, 250, 0.3);
+			font-size: 0.8rem;
+			letter-spacing: 0.14em;
+			color: #b197fc;
+		}
+
+		.tile-body {
+			padding: 1.1rem;
+			color: #cfc7e6;
+			font-size: 0.875rem;
+			line-height: 1.75;
+		}
+
+		@media (min-width: 768px) {
+			.tile-body {
+				padding: 1.4rem 1.5rem;
+				font-size: 1rem;
+			}
+		}
+
+		.tile a {
+			color: #b197fc;
+			text-decoration: underline;
+			text-underline-offset: 3px;
+		}
+
+		.tile a:hover { color: #d8ccff; }
+
+		/* dates and periods, at body size. #8672d6 is one of the skyline's window colours, and
+		   the dimmest violet that still clears 4.5:1 on the panel. */
+		.meta {
+			color: #8672d6;
+			white-space: nowrap;
+		}
+
+		.entry + .entry {
+			margin-top: 1.5rem;
+			padding-top: 1.5rem;
+			border-top: 1px dashed rgba(151, 117, 250, 0.2);
+		}
+
+		.entry-head {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: baseline;
+			justify-content: space-between;
+			column-gap: 1rem;
+		}
+
+		.entry-org {
+			color: #fff;
+			font-size: 1.05em;
+		}
+
+		/* date | text. Stacked on phones, a date gutter from 640px up. The gutter's minimum is
+		   the longest date ("2026.03 – 2028.01", 17 characters of a monospace face) so every
+		   panel's text column starts at the same x. */
+		.rows { display: grid; }
+		.rows dt + dd { margin-bottom: 0.9rem; }
+		.rows dd:last-child { margin-bottom: 0; }
+
+		@media (min-width: 640px) {
+			.rows {
+				grid-template-columns: minmax(17ch, max-content) 1fr;
+				column-gap: 1.5rem;
+				row-gap: 0.75rem;
+				align-items: baseline;
+			}
+
+			.rows dt + dd { margin-bottom: 0; }
+		}
+
+		.sub {
+			margin-top: 0.5rem;
+			padding-left: 0.9rem;
+			border-left: 1px solid rgba(151, 117, 250, 0.35);
+		}
+
+		.bullets li {
+			position: relative;
+			padding-left: 1.25rem;
+		}
+
+		.bullets li + li { margin-top: 0.35rem; }
+
+		.bullets li::before {
+			content: ">";
+			position: absolute;
+			left: 0;
+			color: #8672d6;
+		}
+
+
+		/* this page's own icon in the header: lit, not a link */
+		.nav-current { color: #d8ccff; }
+		.nav-current svg { filter: drop-shadow(0 0 6px rgba(151, 117, 250, 0.7)); }
+
+		@media (prefers-reduced-motion: reduce) {
+			#id_crt_overlay,
+			#id_title_cursor,
+			.crt-in,
+			.crt-in-late,
+			.fade-in,
+			.glitching {
+				animation: none !important;
+			}
+
+			.crt-in,
+			.crt-in-late,
+			.fade-in {
+				opacity: 1;
+			}
+		}
+
+		/* Printing: the browser drops dark backgrounds, which would leave violet-on-white text
+		   nobody can read. Night city off, ink on. */
+		@media print {
+			#id_city_canvas,
+			#id_crt_overlay,
+			#id_bootline,
+			#id_title_cursor,
+			.site-nav,
+			.tile::before,
+			.tile::after,
+			#id_title_frame::before,
+			#id_title_frame::after {
+				display: none !important;
+			}
+
+			body { background: #fff; }
+			* { color: #000 !important; text-shadow: none !important; box-shadow: none !important; }
+			.meta, .tile-title, .bullets li::before { color: #555 !important; }
+			#id_title { filter: none; }
+			#id_title_frame { padding-left: 0; }
+			.tile { background: none; border-color: #bbb; break-inside: avoid; }
+		}
+	</style>
+</head>
+
+<body class="leading-normal tracking-normal">
+	<canvas id="id_city_canvas"></canvas>
+	<div id="id_crt_overlay"></div>
+
+	<!-- header: the landing page's, with this page's icon lit -->
+	<div class="w-full container mx-auto p-6 site-nav">
+		<div class="w-full flex items-center justify-between">
+			<a class="flex items-center gap-3 no-underline hover:no-underline font-bold text-2xl lg:text-4xl text-logo"
+				href="/">
+				<svg class="h-8 w-8 lg:h-10 lg:w-10 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true">
+					<defs>
+						<linearGradient id="id_logo_gradient" x1="0" y1="0" x2="1" y2="1">
+							<stop offset="0" stop-color="#8b5cf6" />
+							<stop offset="1" stop-color="#6d28d9" />
+						</linearGradient>
+					</defs>
+					<rect width="32" height="32" rx="2" fill="url(#id_logo_gradient)" />
+					<g transform="translate(4 4)" stroke-linejoin="round">
+						<line x1="22" y1="5" x2="22" y2="2" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" />
+						<line x1="22" y1="2" x2="18" y2="6" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" />
+						<line x1="14.6" y1="3.97" x2="20.03" y2="9.4" stroke="#ffffff" stroke-width="1.1" stroke-linecap="round" />
+						<line x1="14.6" y1="3.97" x2="7.18" y2="5.95" stroke="#ffffff" stroke-width="1.1" stroke-linecap="round" />
+						<line x1="7.18" y1="5.95" x2="12.61" y2="11.39" stroke="#ffffff" stroke-width="1.1" stroke-linecap="round" />
+						<line x1="7.18" y1="5.95" x2="5.19" y2="13.38" stroke="#ffffff" stroke-width="1.1" stroke-linecap="round" />
+						<line x1="12.61" y1="11.39" x2="18.05" y2="16.82" stroke="#ffffff" stroke-width="1.1" stroke-linecap="round" />
+						<line x1="12.61" y1="11.39" x2="10.62" y2="18.8" stroke="#ffffff" stroke-width="1.1" stroke-linecap="round" />
+						<line x1="5.19" y1="13.38" x2="3.2" y2="20.8" stroke="#ffffff" stroke-width="1.1" stroke-linecap="round" />
+						<rect x="12.5" y="1.87" width="4.2" height="4.2" rx="1" fill="#ffffff" />
+						<rect x="5.08" y="3.85" width="4.2" height="4.2" rx="1" fill="#ffffff" />
+						<rect x="17.93" y="7.3" width="4.2" height="4.2" rx="1" fill="#ffffff" />
+						<rect x="10.51" y="9.29" width="4.2" height="4.2" rx="1" fill="#ffffff" />
+						<rect x="3.09" y="11.28" width="4.2" height="4.2" rx="1" fill="#ffffff" />
+						<rect x="15.95" y="14.72" width="4.2" height="4.2" rx="1" fill="#ffffff" />
+						<rect x="8.52" y="16.7" width="4.2" height="4.2" rx="1" fill="#ffffff" />
+						<rect x="1.1" y="18.7" width="4.2" height="4.2" rx="1" fill="#ffffff" />
+					</g>
+				</svg>
+				<span class="inline-block" style="transform: translateY(2px)">VINEYARD</span>
+			</a>
+
+			<div class="flex w-1/2 justify-end content-center">
+				<span class="inline-block nav-current text-center h-10 p-2 md:h-auto md:p-4"
+					role="img" aria-label="Resume (this page)" aria-current="page" title="Resume">
+					<svg class="fill-current h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+						<path
+							d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M11 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0m2 5.755V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-.245S4 12 8 12s5 1.755 5 1.755">
+						</path>
+					</svg>
+				</span>
+				<a class="inline-block text-accent hover-accent-dark no-underline text-center h-10 p-2 md:h-auto md:p-4"
+					data-tippy-content="X (Twitter)" href="https://x.com/copy_and_paster"
+					target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)">
+					<svg class="fill-current h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+						<path
+							d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z">
+						</path>
+					</svg>
+				</a>
+				<a class="inline-block text-accent hover-accent-dark no-underline text-center h-10 p-2 md:h-auto md:p-4"
+					data-tippy-content="LinkedIn" href="https://www.linkedin.com/in/whatabeautifulmoment/"
+					target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+					<svg class="fill-current h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+						<path
+							d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854zm4.943 12.248V6.169H2.542v7.225zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248S2.4 3.226 2.4 3.934c0 .694.521 1.248 1.327 1.248zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016l.016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225z">
+						</path>
+					</svg>
+				</a>
+			</div>
+		</div>
+	</div>
+
+	<!-- Left column only, as on the landing page, so the skyline's towers stay visible to the
+	     right on wide screens. -->
+	<div class="container px-6 mx-auto pt-6 md:pt-16 pb-24">
+		<div class="w-full max-w-4xl">
+
+			<header>
+				<p id="id_bootline" class="text-accent-dim text-xs md:text-sm mb-2"></p>
+
+				<!-- inline-block: the landing page's frame hugs its title because that title wraps
+				     to fill a narrow column; a name is short, so it has to shrink to fit instead. -->
+				<div id="id_title_frame" class="crt-in inline-block">
+					<h1 id="id_title" class="my-0 text-3xl md:text-5xl text-accent font-bold leading-tight">
+						<span id="id_title_text">YONG-HYUN KIM</span><span id="id_title_cursor">|</span>
+					</h1>
+				</div>
+
+				<p class="text-white text-base md:text-xl mt-6 crt-in-late">
+					Cyber Security Analyst &middot; Financial Security Institute (FSI), Korea
+				</p>
+				<p class="text-accent text-xs md:text-sm mt-2 crt-in-late" style="letter-spacing: 0.08em">
+					CTI &middot; DETECTION ENGINEERING &middot; DIGITAL FORENSICS &middot; INCIDENT RESPONSE
+				</p>
+			</header>
+
+			<main class="mt-10 md:mt-12 grid gap-6 fade-in">
+
+				<section class="tile">
+					<h2 class="tile-title"><span aria-hidden="true">&gt; </span>EXPERIENCE</h2>
+					<div class="tile-body">
+
+						<div class="entry">
+							<div class="entry-head">
+								<h3 class="entry-org">Financial Security Institute (FSI)</h3>
+								<p class="meta">2016.10 – PRESENT</p>
+							</div>
+							<p class="text-accent">Cyber Security Analyst</p>
+							<dl class="rows mt-3">
+								<dt class="meta">2026.03 – 2028.01</dt>
+								<dd>Sponsored graduate study (Forensic, Sungkyunkwan University)</dd>
+								<dt class="meta">2021.01 – 2026.02</dt>
+								<dd>Financial sector SOC &middot; CTI service (planning / development / operation) &middot; Threat intelligence production research &middot; ASM service (planning / development)</dd>
+								<dt class="meta">2020.01 – 2021.01</dt>
+								<dd>Financial MyData &middot; Financial data exchange</dd>
+								<dt class="meta">2016.10 – 2020.01</dt>
+								<dd>Financial sector incident response &middot; Digital forensic investigation &middot; Forensic methodology research</dd>
+							</dl>
+						</div>
+
+						<div class="entry">
+							<div class="entry-head">
+								<h3 class="entry-org">Panicsecurity</h3>
+								<p class="meta">2012.04 – 2016.10</p>
+							</div>
+							<p class="text-accent">DAST Software Developer</p>
+							<ul class="bullets mt-3">
+								<li>Web vulnerability scanner development</li>
+								<li>Web vulnerability assessment &middot; Penetration testing</li>
+							</ul>
+						</div>
+
+					</div>
+				</section>
+
+				<section class="tile">
+					<h2 class="tile-title"><span aria-hidden="true">&gt; </span>TALKS &amp; REPORTS</h2>
+					<div class="tile-body">
+						<dl class="rows">
+							<dt class="meta">2024.12</dt>
+							<dd>
+								<p class="text-accent">Black Hat Europe 2024</p>
+								<p><a href="https://i.blackhat.com/EU-24/Presentations/EU-24-Jang-OperationMIDAS-TrackingFraudulentFinancialProgramOrganizations.pdf"
+									target="_blank" rel="noopener noreferrer">Operation MIDAS: Tracking Fraudulent Financial Program Organizations</a></p>
+								<div class="sub">
+									<p class="text-accent">CTI Report</p>
+									<p><a href="https://www.fsec.or.kr/bbs/detail?menuNo=244&amp;bbsNo=11452"
+										target="_blank" rel="noopener noreferrer">Operation MIDAS — An Illegal Private HTS Program Threat Analysis Report on Financial Sector</a>
+										(lead analyst &amp; author)</p>
+								</div>
+							</dd>
+							<dt class="meta">2023.07</dt>
+							<dd>
+								<p class="text-accent">FS-ISAC APAC Summit 2023</p>
+								<p>Building Cyber Threat Intelligence Service from 2 Billion NIDS Events over 8 Years</p>
+							</dd>
+							<dt class="meta">2019.05</dt>
+							<dd>
+								<p class="text-accent">KNPA ISCR 2019</p>
+								<p>Fight Against Cybercrime: GandCrab Threat Groups</p>
+							</dd>
+						</dl>
+					</div>
+				</section>
+
+				<section class="tile">
+					<h2 class="tile-title"><span aria-hidden="true">&gt; </span>AWARDS</h2>
+					<div class="tile-body">
+						<dl class="rows">
+							<dt class="meta">2018</dt>
+							<dd>
+								<!-- dfchallenge.org/winners-2018/ is gone (404) since the site moved to Wix;
+								     this is the same year's winners page at its new address. -->
+								<a href="https://www.dfchallenge.org/techwinners/2018" target="_blank" rel="noopener noreferrer">Digital Forensics Challenge 2018</a> &middot; 1st place
+							</dd>
+							<dt class="meta">2017</dt>
+							<dd>
+								<a href="https://github.com/whatabeautifulmemory/glossy" target="_blank" rel="noopener noreferrer">KDFS 2017</a> &middot; 1st place
+							</dd>
+						</dl>
+					</div>
+				</section>
+
+				<section class="tile">
+					<h2 class="tile-title"><span aria-hidden="true">&gt; </span>CERTIFICATIONS</h2>
+					<div class="tile-body">
+						<ul class="bullets">
+							<li>Professional Engineer, Information Management</li>
+							<li>Professional Engineer, Computer System Application</li>
+							<li>Senior Information System Auditor</li>
+							<li>SW Security Weakness Auditor</li>
+							<li>CISSP</li>
+						</ul>
+					</div>
+				</section>
+
+			</main>
+		</div>
+	</div>
+
+	<script>
+		// shared motion preference
+		var REDUCE_MOTION = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+	</script>
+
+	<script>
+		// PIXEL SKYLINE — index.html's, verbatim (see the comments there).
+		(function () {
+			var canvas = document.getElementById('id_city_canvas');
+			if (!canvas || !canvas.getContext) return;
+			var ctx = canvas.getContext('2d');
+			var dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+			var base = document.createElement('canvas');   // unlit scene, baked once
+			var bctx = base.getContext('2d');
+			var scene = document.createElement('canvas');  // base + live lights, per render
+			var sctx = scene.getContext('2d');
+
+			var COOL = ['#b197fc', '#9d86e8', '#8672d6', '#d8ccff'];
+			var WARM = ['#e6d6a3', '#d9c188'];
+			var WARM_RATE = 0.18;
+			var REFLECTION_ALPHA = 0.34;
+
+			var width, height, waterY, frame, lights, shimmers;
+
+			function rand(a, b) { return a + Math.random() * (b - a); }
+			function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+			function windowColor() { return Math.random() < WARM_RATE ? pick(WARM) : pick(COOL); }
+
+			function addLight(x, y, w, h, color, baseAlpha) {
+				lights.push({
+					x: Math.round(x), y: Math.round(y), w: w, h: h,
+					color: color, base: baseAlpha,
+					phase: rand(0, Math.PI * 2), speed: rand(0.004, 0.016)
+				});
+			}
+
+			function drawSky() {
+				var g = bctx.createLinearGradient(0, 0, 0, waterY);
+				g.addColorStop(0, '#020107');
+				g.addColorStop(0.6, '#0a0616');
+				g.addColorStop(1, '#191033');
+				bctx.fillStyle = g;
+				bctx.fillRect(0, 0, width, height);
+
+				var count = Math.round(width / 22);
+				for (var i = 0; i < count; i++) {
+					addLight(Math.random() * width, Math.random() * height * 0.42, 1, 1, '#d2c8ff', rand(0.25, 0.85));
+				}
+			}
+
+			function drawBuilding(x, bw, bh, layer) {
+				var top = waterY - bh;
+				bctx.fillStyle = layer.sil;
+				bctx.fillRect(Math.round(x), Math.round(top), Math.round(bw), Math.round(bh));
+
+				var litRate = rand(layer.litMin, layer.litMax);
+				var c = layer.cell;
+				for (var wy = top + c.inset; wy < waterY - c.h - 2; wy += c.py) {
+					for (var wx = x + c.inset; wx < x + bw - c.w - c.inset; wx += c.px) {
+						if (Math.random() > litRate) continue;
+						addLight(wx, wy, c.w, c.h, windowColor(), rand(0.4, 1) * layer.alpha);
+					}
+				}
+			}
+
+			function drawLayer(layer) {
+				var x = -rand(10, 40);
+				while (x < width + 20) {
+					var bw = rand(layer.wMin, layer.wMax);
+					var bh = waterY * rand(layer.hMin, layer.hMax);
+					drawBuilding(x, bw, bh, layer);
+					x += bw + rand(layer.gapMin, layer.gapMax);
+				}
+			}
+
+			function drawTwinTowers(layer) {
+				var tw = Math.max(38, Math.min(72, width * 0.045));
+				var xc = width * 0.74;
+				drawBuilding(xc - tw - 9, tw, waterY * 0.78, layer);
+				drawBuilding(xc + 9, tw, waterY * 0.74, layer);
+			}
+
+			function drawShore() {
+				bctx.fillStyle = '#05040c';
+				for (var x = -6; x < width + 6; x += rand(6, 12)) {
+					var th = rand(6, 18);
+					var twd = rand(8, 16);
+					bctx.beginPath();
+					bctx.ellipse(x, waterY - th * 0.4, twd * 0.5, th * 0.6, 0, 0, Math.PI * 2);
+					bctx.fill();
+				}
+				for (var lx = rand(10, 40); lx < width; lx += rand(35, 90)) {
+					addLight(lx, waterY - 3, 2, 2, Math.random() < 0.5 ? '#e6d6a3' : '#b197fc', rand(0.5, 0.9));
+				}
+			}
+
+			function buildScene() {
+				lights = [];
+				shimmers = [];
+				bctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+				bctx.imageSmoothingEnabled = false;
+				bctx.clearRect(0, 0, width, height);
+
+				drawSky();
+
+				drawLayer({
+					sil: '#0c0918', alpha: 0.45, litMin: 0.08, litMax: 0.26,
+					wMin: 34, wMax: 80, hMin: 0.20, hMax: 0.42, gapMin: 2, gapMax: 14,
+					cell: { w: 2, h: 2, px: 4, py: 4, inset: 2 }
+				});
+				var near = {
+					sil: '#070510', alpha: 1.0, litMin: 0.15, litMax: 0.50,
+					wMin: 50, wMax: 130, hMin: 0.26, hMax: 0.58, gapMin: 4, gapMax: 26,
+					cell: { w: 4, h: 3, px: 7, py: 6, inset: 3 }
+				};
+				drawLayer({
+					sil: '#0a0714', alpha: 0.7, litMin: 0.12, litMax: 0.36,
+					wMin: 40, wMax: 100, hMin: 0.24, hMax: 0.50, gapMin: 3, gapMax: 18,
+					cell: { w: 3, h: 2, px: 5, py: 5, inset: 2 }
+				});
+				drawTwinTowers(near);
+				drawLayer(near);
+
+				drawShore();
+
+				for (var i = 0; i < Math.round(width / 60); i++) {
+					shimmers.push({
+						x: Math.round(rand(0, width - 50)),
+						y: Math.round(rand(waterY + 2, height - 2)),
+						w: Math.round(rand(15, 50)),
+						a: rand(0.04, 0.10)
+					});
+				}
+			}
+
+			function render() {
+				if (!width || !height || !lights) return;
+				sctx.setTransform(1, 0, 0, 1, 0, 0);
+				sctx.clearRect(0, 0, scene.width, scene.height);
+				sctx.drawImage(base, 0, 0);
+				sctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+				for (var i = 0; i < lights.length; i++) {
+					var t = lights[i];
+					var pulse = REDUCE_MOTION ? 0.85
+						: 0.3 + 0.7 * (0.5 + 0.5 * Math.sin(frame * t.speed + t.phase));
+					sctx.globalAlpha = t.base * pulse;
+					sctx.fillStyle = t.color;
+					sctx.fillRect(t.x, t.y, t.w, t.h);
+				}
+				sctx.globalAlpha = 1;
+
+				ctx.setTransform(1, 0, 0, 1, 0, 0);
+				ctx.clearRect(0, 0, canvas.width, canvas.height);
+				ctx.drawImage(scene, 0, 0);
+
+				var reflH = height - waterY;
+				if (reflH > 0) {
+					ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+					ctx.save();
+					ctx.globalAlpha = REFLECTION_ALPHA;
+					ctx.translate(0, waterY + reflH);
+					ctx.scale(1, -1);
+					ctx.drawImage(scene,
+						0, (waterY - reflH) * dpr, width * dpr, reflH * dpr,
+						0, 0, width, reflH);
+					ctx.restore();
+
+					var g = ctx.createLinearGradient(0, waterY, 0, height);
+					g.addColorStop(0, 'rgba(12,9,26,0.22)');
+					g.addColorStop(1, 'rgba(2,1,8,0.58)');
+					ctx.fillStyle = g;
+					ctx.fillRect(0, waterY, width, reflH);
+
+					for (var s = 0; s < shimmers.length; s++) {
+						ctx.fillStyle = 'rgba(177,151,252,' + shimmers[s].a + ')';
+						ctx.fillRect(shimmers[s].x, shimmers[s].y, shimmers[s].w, 1);
+					}
+				}
+			}
+
+			function resize() {
+				if (!window.innerWidth || !window.innerHeight) return;
+				width = window.innerWidth;
+				height = window.innerHeight;
+				waterY = Math.round(height * 0.88);
+				frame = 0;
+				canvas.width = base.width = scene.width = width * dpr;
+				canvas.height = base.height = scene.height = height * dpr;
+				canvas.style.width = width + 'px';
+				canvas.style.height = height + 'px';
+				ctx.imageSmoothingEnabled = false;
+				sctx.imageSmoothingEnabled = false;
+				buildScene();
+				render();
+			}
+
+			function loop() {
+				frame++;
+				if (frame % 5 === 0) render();
+				requestAnimationFrame(loop);
+			}
+
+			window.addEventListener('resize', resize);
+			resize();
+			if (!REDUCE_MOTION) requestAnimationFrame(loop);
+		})();
+	</script>
+
+	<script>
+		// BOOT SEQUENCE + TITLE DECODE + OCCASIONAL GLITCH — index.html's, with its own boot line.
+		(function () {
+			var bootline = document.getElementById('id_bootline');
+			var titleText = document.getElementById('id_title_text');
+			var title = document.getElementById('id_title');
+			if (!bootline || !titleText || !title) return;
+
+			var BOOT = '> whoami';
+			var FINAL = titleText.textContent;
+			var SCRAMBLE = 'アイウエオカキクケコサシスセソ01>/\\|=+*#';
+
+			function randomChar() {
+				return SCRAMBLE.charAt(Math.floor(Math.random() * SCRAMBLE.length));
+			}
+
+			function scheduleGlitch() {
+				setTimeout(function () {
+					title.classList.add('glitching');
+					setTimeout(function () { title.classList.remove('glitching'); }, 240);
+					scheduleGlitch();
+				}, 3500 + Math.random() * 6500);
+			}
+
+			if (REDUCE_MOTION) {
+				bootline.textContent = BOOT;
+				return;
+			}
+
+			titleText.textContent = '';
+			var bi = 0;
+			var typeTimer = setInterval(function () {
+				bi++;
+				bootline.textContent = BOOT.slice(0, bi);
+				if (bi >= BOOT.length) {
+					clearInterval(typeTimer);
+					setTimeout(decodeTitle, 250);
+				}
+			}, 28);
+
+			function decodeTitle() {
+				var locked = 0;
+				var total = FINAL.length;
+				var decodeTimer = setInterval(function () {
+					locked += 1 + Math.floor(Math.random() * 2);
+					if (locked >= total) {
+						titleText.textContent = FINAL;
+						clearInterval(decodeTimer);
+						scheduleGlitch();
+						return;
+					}
+					var out = FINAL.slice(0, locked);
+					for (var i = locked; i < total; i++) {
+						out += FINAL.charAt(i) === ' ' ? ' ' : randomChar();
+					}
+					titleText.textContent = out;
+				}, 34);
+			}
+		})();
+	</script>
+</body>
+
+</html>
