@@ -165,6 +165,8 @@
 			border: 1px solid rgba(151, 117, 250, 0.35);
 			background: rgba(6, 4, 15, 0.8);
 			box-shadow: 6px 6px 0 rgba(151, 117, 250, 0.18);
+			/* one text size for the whole panel, title included; 1rem from 768px up */
+			font-size: 0.875rem;
 		}
 
 		.tile::before,
@@ -193,7 +195,6 @@
 		.tile-title {
 			padding: 0.9rem 1.1rem;
 			border-bottom: 1px solid rgba(151, 117, 250, 0.3);
-			font-size: 0.8rem;
 			letter-spacing: 0.14em;
 			color: #b197fc;
 		}
@@ -201,15 +202,14 @@
 		.tile-body {
 			padding: 1.1rem;
 			color: #cfc7e6;
-			font-size: 0.875rem;
 			line-height: 1.75;
 		}
 
+		/* title and body share a left edge at both widths */
 		@media (min-width: 768px) {
-			.tile-body {
-				padding: 1.4rem 1.5rem;
-				font-size: 1rem;
-			}
+			.tile { font-size: 1rem; }
+			.tile-title { padding: 1rem 1.5rem; }
+			.tile-body { padding: 1.4rem 1.5rem; }
 		}
 
 		.tile a {
