@@ -230,6 +230,21 @@
 			}
 		}
 
+		/* From xl the hero text sits in a 2/5 column (~490px at 1280, ~600px at 1536) so the skyline
+		   keeps the rest; three buttons at the md size need ~640px and the third wrapped onto a line
+		   of its own. Tighter type, padding and gap keep the row on one line there. */
+		@media (min-width: 1280px) {
+			.btn-cta {
+				font-size: 0.8125rem;
+				letter-spacing: 0.06em;
+				padding: 0.7rem 0.85rem;
+			}
+
+			.cta-row {
+				gap: 0.75rem;
+			}
+		}
+
 		/* primary: filled, hard pixel shadow */
 		.btn-cta-primary {
 			background: #9775fa;
@@ -598,7 +613,7 @@
 					<p class="mb-3 text-center md:text-left">
 						<span class="beta-tag"><span class="beta-dot"></span>STATUS: CURRENTLY IN TESTING</span>
 					</p>
-					<div class="flex flex-wrap gap-4 justify-center md:justify-start">
+					<div class="cta-row flex flex-wrap gap-4 justify-center md:justify-start">
 						<a class="btn-cta btn-cta-primary" href="https://app.vineyard.run"
 							target="_blank" rel="noopener noreferrer">
 							<span class="btn-glyph">&#9656;</span> LAUNCH WEB APP
