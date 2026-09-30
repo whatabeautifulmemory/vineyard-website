@@ -263,6 +263,22 @@
 				inset 0 0 8px rgba(151, 117, 250, 0.12);
 		}
 
+		/* tertiary: a dashed outline — boxed like its neighbours, one step quieter than the
+		   solid ghost button, so the row reads filled > solid > dashed */
+		.btn-cta-link {
+			background: transparent;
+			border: 1px dashed rgba(177, 151, 252, 0.7);
+			color: #b197fc;
+		}
+
+		.btn-cta-link:hover {
+			color: #d8ccff;
+			border-style: solid;
+			border-color: #b197fc;
+			background: rgba(151, 117, 250, 0.10);
+			box-shadow: 0 0 12px rgba(151, 117, 250, 0.3);
+		}
+
 		.btn-cta .btn-glyph {
 			font-size: 0.8em;
 			opacity: 0.9;
@@ -595,6 +611,10 @@
 						<button type="button" class="btn-cta btn-cta-ghost" id="id_install_open">
 							<span class="btn-glyph">&#8681;</span> DESKTOP CLIENT
 						</button>
+						<a class="btn-cta btn-cta-link" href="https://docs.vineyard.run/"
+							target="_blank" rel="noopener noreferrer">
+							<span class="btn-glyph">&#9776;</span> <span class="btn-label"><span class="hidden md:inline">DOCUMENTATION</span><span class="md:hidden">DOCS</span></span> <span class="btn-glyph">&#8599;</span>
+						</a>
 					</div>
 					<p class="btn-cta-note text-accent-dim text-xs mt-3 text-center md:text-left">
 						&gt; runs in your browser &mdash; or install the desktop client for macOS or Windows. things may break while we test.
