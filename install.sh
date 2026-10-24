@@ -18,6 +18,14 @@
 
 set -euo pipefail
 
+# The wrong installer for the platform fails in a way that reads as a broken release. One line here
+# is cheaper than letting a Linux user work out why a .app does not appear.
+if [ "$(uname -s)" = "Linux" ]; then
+    echo "vineyard: this installer is for macOS. On Linux run:" >&2
+    echo "  curl -fsSL https://vineyard.run/linux-install.sh | bash" >&2
+    exit 1
+fi
+
 REPO="whatabeautifulmemory/vineyard-website"
 ZIP="Vineyard-mac-arm64.zip"
 

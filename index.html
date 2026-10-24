@@ -713,6 +713,18 @@
 					</p>
 
 					<div class="step">
+						<p class="step-label">ONE COMMAND</p>
+						<p style="margin:0 0 .5rem">
+							Detects the distribution and architecture, checks the download against the
+							release's SHA-256, and installs it with apt or pacman.
+						</p>
+						<div class="cmd">
+							<code>curl -fsSL https://vineyard.run/linux-install.sh | bash</code>
+							<button type="button" data-copy>COPY</button>
+						</div>
+					</div>
+
+					<div class="step">
 						<p class="step-label">DEBIAN / UBUNTU</p>
 						<p style="margin:0 0 .5rem">
 							<a href="https://github.com/whatabeautifulmemory/vineyard-website/releases/latest/download/Vineyard-linux-amd64.deb">Vineyard-linux-amd64.deb</a>
@@ -742,10 +754,10 @@
 					</div>
 
 					<div class="step">
-						<p class="step-label">ANY DISTRIBUTION (APPIMAGE)</p>
+						<p class="step-label">ANY DISTRIBUTION (APPIMAGE, X86_64)</p>
 						<p style="margin:0 0 .5rem">
 							<a href="https://github.com/whatabeautifulmemory/vineyard-website/releases/latest/download/Vineyard-linux-x86_64.AppImage">Vineyard-linux-x86_64.AppImage</a>
-							&mdash; nothing to install; keep it anywhere and run it.
+							&mdash; nothing to install; keep it anywhere and run it. x86_64 only: on ARM, use the pacman package.
 						</p>
 						<div class="cmd">
 							<code>chmod +x Vineyard-linux-x86_64.AppImage &amp;&amp; ./Vineyard-linux-x86_64.AppImage</code>
