@@ -621,8 +621,8 @@
 						<!-- Opens the install dialog rather than linking straight to the GitHub
 						     releases page. That page lists three files, two of them for macOS
 						     (the .zip is Homebrew's, not a human's), says nothing about the builds
-						     being unsigned, and offers nothing at all to a Linux or Intel-Mac
-						     visitor. It is still one click away at the foot of the dialog. -->
+						     being unsigned, and offers nothing at all to an Intel-Mac visitor.
+						     It is still one click away at the foot of the dialog. -->
 						<button type="button" class="btn-cta btn-cta-ghost" id="id_install_open">
 							<span class="btn-glyph">&#8681;</span> DESKTOP CLIENT
 						</button>
@@ -632,7 +632,7 @@
 						</a>
 					</div>
 					<p class="btn-cta-note text-accent-dim text-xs mt-3 text-center md:text-left">
-						&gt; runs in your browser &mdash; or install the desktop client for macOS or Windows. things may break while we test.
+						&gt; runs in your browser &mdash; or install the desktop client for macOS, Windows or Linux. things may break while we test.
 					</p>
 				</div>
 			</div>
@@ -706,19 +706,42 @@
 				</div>
 
 				<div class="os-pane" role="tabpanel" id="pane-linux" aria-labelledby="tab-linux" hidden>
+					<p class="warn">
+						EARLY LINUX BUILD. Run on Ubuntu 24.04 and Xubuntu only &mdash; other distributions
+						and display setups may not work. The macOS and Windows builds are the tested ones;
+						please report what breaks.
+					</p>
+
 					<div class="step">
-						<!-- Saying "there is no build" is the point of this pane. Sending a Linux
-						     visitor to a releases page holding two macOS files and a .exe answers
-						     nothing and looks like the download is broken. -->
-						<p class="step-label">NO DESKTOP BUILD YET</p>
+						<p class="step-label">DEBIAN / UBUNTU</p>
 						<p style="margin:0 0 .5rem">
-							The desktop client ships for macOS (Apple Silicon) and Windows only.
-							On Linux, use the web app &mdash; it is the same application.
+							<a href="https://github.com/whatabeautifulmemory/vineyard-website/releases/latest/download/Vineyard-linux-amd64.deb">Vineyard-linux-amd64.deb</a>
+							&mdash; Ubuntu 22.04+ or Debian 12+, x86_64.
+							ARM64: <a href="https://github.com/whatabeautifulmemory/vineyard-website/releases/latest/download/Vineyard-linux-arm64.deb">Vineyard-linux-arm64.deb</a>.
 						</p>
-						<p style="margin:0">
-							<a href="https://app.vineyard.run" target="_blank" rel="noopener noreferrer">app.vineyard.run &rarr;</a>
-						</p>
+						<div class="cmd">
+							<code>sudo apt install ./Vineyard-linux-amd64.deb</code>
+							<button type="button" data-copy>COPY</button>
+						</div>
 					</div>
+
+					<div class="step">
+						<p class="step-label">ANY DISTRIBUTION (APPIMAGE)</p>
+						<p style="margin:0 0 .5rem">
+							<a href="https://github.com/whatabeautifulmemory/vineyard-website/releases/latest/download/Vineyard-linux-x86_64.AppImage">Vineyard-linux-x86_64.AppImage</a>
+							&mdash; nothing to install; keep it anywhere and run it.
+						</p>
+						<div class="cmd">
+							<code>chmod +x Vineyard-linux-x86_64.AppImage &amp;&amp; ./Vineyard-linux-x86_64.AppImage</code>
+							<button type="button" data-copy>COPY</button>
+						</div>
+					</div>
+
+					<p class="warn">
+						UNSIGNED BUILD, like the others. Checksums:
+						<a href="https://github.com/whatabeautifulmemory/vineyard-website/releases/latest/download/SHA256SUMS">SHA256SUMS</a>.
+						Korean input needs an input method (e.g. ibus-hangul) that Linux does not install by default.
+					</p>
 				</div>
 
 				<div class="dlg-foot">
