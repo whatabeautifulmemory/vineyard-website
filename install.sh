@@ -1,65 +1,25 @@
 #!/usr/bin/env bash
 #
-# Vineyard installer for macOS (Apple Silicon).
+# Vineyard installer — the one URL, dispatched by platform.
 #
-# Latest-version discovery, no version hardcoding:
-#   1. GitHub API  -> exact release tag (rate limit: 60/h per IP, plenty)
-#   2. Fallback    -> version-agnostic `releases/latest/download/…` URL,
-#                     which always serves the newest build (works even when
-#                     the API is rate-limited).
-#
-# curl downloads carry no quarantine attribute (that is a browser thing), so
-# the installed app launches without Gatekeeper's "cannot verify" dialog.
-# The xattr strip below is a belt-and-suspenders step, not the mechanism.
-#
-# Usage:
 #   curl -fsSL https://vineyard.run/install.sh | bash
 #
-
+# This used to BE the macOS installer, and the name was a lie the moment Linux shipped: a Linux
+# visitor who copied it got an error about a .app that would never appear. The platform-specific
+# scripts still exist (install-macos.sh, install-linux.sh) for anyone who wants to read what runs,
+# but the public command is one line on every platform and the choice is made here.
 set -euo pipefail
 
-# The wrong installer for the platform fails in a way that reads as a broken release. One line here
-# is cheaper than letting a Linux user work out why a .app does not appear.
-if [ "$(uname -s)" = "Linux" ]; then
-    echo "vineyard: this installer is for macOS. On Linux run:" >&2
-    echo "  curl -fsSL https://vineyard.run/linux-install.sh | bash" >&2
-    exit 1
-fi
+case "$(uname -s)" in
+    Darwin) SCRIPT="install-macos.sh" ;;
+    Linux) SCRIPT="install-linux.sh" ;;
+    *)
+        echo "vineyard: unsupported operating system: $(uname -s)" >&2
+        echo "  macOS and Linux have installers; Windows has an .exe on the releases page." >&2
+        exit 1
+        ;;
+esac
 
-REPO="whatabeautifulmemory/vineyard-website"
-ZIP="Vineyard-mac-arm64.zip"
-
-# 1) Exact release via the GitHub API (tag name only, no jq needed).
-URL=""
-if LATEST="$(curl -fsSL --max-time 15 "https://api.github.com/repos/${REPO}/releases/latest" \
-    | grep -o '"tag_name": *"[^"]*"' | cut -d'"' -f4 2>/dev/null)" && [ -n "$LATEST" ]; then
-    CANDIDATE="https://github.com/${REPO}/releases/download/${LATEST}/${ZIP}"
-    if curl -fsIL --max-time 15 "$CANDIDATE" >/dev/null 2>&1; then
-        URL="$CANDIDATE"
-    fi
-fi
-
-# 2) Fallback: version-agnostic latest download.
-if [ -z "$URL" ]; then
-    URL="https://github.com/${REPO}/releases/latest/download/${ZIP}"
-fi
-
-echo "Vineyard: downloading ${URL}"
-
-TMP="$(mktemp -d)"
-trap 'rm -rf "$TMP"' EXIT
-
-curl -fL --max-time 600 "$URL" -o "$TMP/vineyard.zip"
-unzip -q "$TMP/vineyard.zip" -d "$TMP"
-xattr -dr com.apple.quarantine "$TMP/Vineyard.app" 2>/dev/null || true
-
-# Replace an existing install; quit a running instance first.
-if [ -d /Applications/Vineyard.app ]; then
-    osascript -e 'quit app "Vineyard"' >/dev/null 2>&1 || true
-    sleep 1
-    rm -rf /Applications/Vineyard.app
-fi
-mv "$TMP/Vineyard.app" /Applications/
-
-echo "Vineyard installed."
-echo "Open it with: open /Applications/Vineyard.app"
+# Streamed, not parsed: both scripts are self-contained, and passing "$@" through keeps
+# `--dry-run` working on the Linux side.
+curl -fsSL "https://vineyard.run/${SCRIPT}" | bash -s -- "$@"
