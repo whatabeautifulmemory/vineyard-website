@@ -304,9 +304,8 @@
 		}
 
 		/* -------- install dialog --------
-		   A native <dialog>, which is the whole reason this is ~40 lines of CSS and no JS
-		   scaffolding: Esc, the backdrop, the top layer and focus containment are the element's
-		   job, not ours. */
+		   A native <dialog>, which is the whole reason there is no JS scaffolding here: Esc, the
+		   backdrop, the top layer and focus containment are the element's job, not ours. */
 		#id_install::backdrop {
 			background: rgba(1, 4, 5, 0.82);
 		}
@@ -319,6 +318,10 @@
 			max-width: 40rem;
 			width: calc(100% - 2rem);
 			box-shadow: 6px 6px 0 rgba(151, 117, 250, 0.25);
+			/* The dialog scrolls once a pane is taller than the viewport, and without this the
+			   browser drew a light-theme scrollbar — a white bar down a near-black box. */
+			color-scheme: dark;
+			scrollbar-color: rgba(151, 117, 250, 0.45) transparent;
 		}
 
 		#id_install .dlg-head {
@@ -373,6 +376,10 @@
 			border-color: #9775fa;
 		}
 
+		/* Every pane has the same shape, in the same order: the one command (where the platform
+		   has one), a download table, then ONE amber notice. The Linux pane used to be four
+		   stacked prose sections between two notices, which is how it got long enough that the
+		   one line most people need sat under a warning and the ARM64 files hid mid-sentence. */
 		#id_install .os-pane { padding: 1.1rem; font-size: 0.78rem; line-height: 1.7; }
 		#id_install .os-pane[hidden] { display: none; }
 
@@ -383,7 +390,17 @@
 			margin: 0 0 0.35rem;
 		}
 
-		#id_install .step + .step { margin-top: 1.1rem; }
+		#id_install .step + .step,
+		#id_install .step + .warn { margin-top: 1.1rem; }
+
+		/* Explanatory small print under a command or a table: the dialog's own text colour,
+		   dimmed, so it reads as secondary without dropping to the HUD's barely-there violet. */
+		#id_install .fine {
+			margin: 0.45rem 0 0;
+			font-size: 0.7rem;
+			line-height: 1.6;
+			color: rgba(216, 204, 255, 0.72);
+		}
 
 		#id_install .cmd {
 			display: flex;
@@ -392,16 +409,33 @@
 			background: rgba(151, 117, 250, 0.06);
 		}
 
+		/* Commands WRAP rather than scroll. They used to be one nowrap line with overflow-x,
+		   which at phone width — and, for the AppImage line, at 800px too — hid the end of the
+		   command behind a scrollbar, the part that says what it runs. A wrapped command copies
+		   the same: the COPY button reads textContent, which line boxes do not change. Breaks
+		   fall at spaces first; `anywhere` only splits a token too long for the line, and
+		   min-width: 0 is what lets a flex item get narrower than that token at all. */
 		#id_install .cmd code {
 			flex: 1;
+			min-width: 0;
 			padding: 0.5rem 0.6rem;
-			overflow-x: auto;
-			white-space: nowrap;
+			white-space: normal;
+			overflow-wrap: anywhere;
 			color: #d8ccff;
 			font-size: 0.74rem;
+			line-height: 1.6;
+		}
+
+		/* A token that must not break inside itself (a file glob, whose hyphen is otherwise a
+		   break opportunity). font-family is restated because <code> takes Tailwind's monospace
+		   stack while the page's `*` rule would hand a bare span the pixel font. */
+		#id_install .cmd .tok {
+			white-space: nowrap;
+			font-family: inherit;
 		}
 
 		#id_install .cmd button {
+			flex: none;
 			border: 0;
 			border-left: 1px solid rgba(151, 117, 250, 0.3);
 			background: transparent;
@@ -414,8 +448,109 @@
 
 		#id_install .cmd button:hover { background: rgba(151, 117, 250, 0.16); }
 
-		/* The unsigned-build warning. Amber, matching the beta tag — this is the single most
-		   common reason a download never becomes a running app, so it is not a footnote. */
+		/* The one command: first in its pane and the path most people should take, so it wears
+		   the primary CTA's look — solid violet edge, the same hard pixel shadow, a filled COPY —
+		   and every other row stays a quiet outline. */
+		#id_install .cmd-main {
+			border-color: #9775fa;
+			box-shadow: 4px 4px 0 rgba(151, 117, 250, 0.35);
+		}
+
+		#id_install .cmd-main code {
+			padding: 0.6rem 0.7rem;
+			font-size: 0.8rem;
+		}
+
+		#id_install .cmd-main button {
+			background: #9775fa;
+			border-left-color: #9775fa;
+			color: #010405;
+		}
+
+		#id_install .cmd-main button:hover { background: #b197fc; }
+
+		/* Download table: one row per format, one column per architecture, so the choice a
+		   reader has to make is the column they are in — not a file name to find inside a
+		   sentence. File names never break: a name split as "Vineyard-linux-" / "arm64.deb"
+		   reads as two things, and the half that differs is the half that wrapped away. */
+		#id_install .dl {
+			width: 100%;
+			border-collapse: collapse;
+			border: 1px solid rgba(151, 117, 250, 0.3);
+			font-size: 0.74rem;
+			line-height: 1.5;
+		}
+
+		#id_install .dl th,
+		#id_install .dl td {
+			padding: 0.45rem 0.6rem;
+			border-top: 1px solid rgba(151, 117, 250, 0.18);
+			text-align: left;
+			vertical-align: top;
+			font-weight: normal;
+		}
+
+		#id_install .dl td { border-left: 1px solid rgba(151, 117, 250, 0.18); }
+
+		#id_install .dl thead th,
+		#id_install .dl thead td {
+			border-top: 0;
+			padding-top: 0.3rem;
+			padding-bottom: 0.3rem;
+			background: rgba(151, 117, 250, 0.06);
+			color: #b197fc;
+			font-size: 0.68rem;
+			letter-spacing: 0.1em;
+		}
+
+		#id_install .dl thead th + th,
+		#id_install .dl thead td + th { border-left: 1px solid rgba(151, 117, 250, 0.18); }
+
+		#id_install .dl tbody th {
+			color: #b197fc;
+			font-size: 0.7rem;
+			letter-spacing: 0.08em;
+		}
+
+		/* With one file column, auto layout split the table about in half and the label column
+		   came out twice as wide as on the Linux tab. Pinned to what the Linux table settles at,
+		   so the three tabs line up. Only here: on the Linux table a pinned width is a MINIMUM,
+		   and near the stacking breakpoint it would push the table past the dialog's edge. */
+		#id_install .dl-single tbody th { width: 9.5rem; }
+
+		#id_install .dl small {
+			display: block;
+			margin-top: 0.1rem;
+			font-size: 0.66rem;
+			line-height: 1.45;
+			letter-spacing: 0;
+			color: rgba(216, 204, 255, 0.6);
+		}
+
+		#id_install .dl a { white-space: nowrap; }
+
+		/* Manual install commands: needed by few, so folded away under the table. A native
+		   <details>, for the same reason the dialog is a native <dialog>. */
+		#id_install .more { margin-top: 0.7rem; }
+
+		#id_install .more > summary {
+			display: inline-block;
+			cursor: pointer;
+			list-style: none;
+			color: #b197fc;
+			font-size: 0.7rem;
+			letter-spacing: 0.1em;
+		}
+
+		#id_install .more > summary::-webkit-details-marker { display: none; }
+		#id_install .more > summary::before { content: "\25B8"; display: inline-block; width: 1.2em; }
+		#id_install .more[open] > summary::before { content: "\25BE"; }
+		#id_install .more > summary:hover { color: #d8ccff; }
+		#id_install .more .cmd { margin-top: 0.4rem; }
+
+		/* The pane's one notice. Amber, matching the beta tag — an unsigned build's refusal is
+		   the single most common reason a download never becomes a running app, so it is not a
+		   footnote. One per pane: two stacked boxes read as one long one, and neither got read. */
 		#id_install .warn {
 			border: 1px solid rgba(230, 214, 163, 0.4);
 			background: rgba(230, 214, 163, 0.07);
@@ -432,7 +567,49 @@
 			color: rgba(177, 151, 252, 0.55);
 		}
 
-		#id_install a { color: #b197fc; }
+		/* Tailwind's preflight strips link underlines; in running text and in the table a link
+		   then differs from its neighbours by colour alone. A dotted rule puts that back in the
+		   page's pixel idiom. */
+		#id_install a {
+			color: #b197fc;
+			text-decoration: underline dotted rgba(177, 151, 252, 0.55);
+			text-underline-offset: 0.2em;
+		}
+
+		#id_install a:hover { color: #d8ccff; text-decoration-color: #d8ccff; }
+
+		/* Below ~640px the dialog cannot hold the 2D table: the two ARM64/x86_64 columns of
+		   unbreakable file names alone need ~440px. Each format then becomes a block, its files
+		   listed under it with the architecture as a prefix (the cell's data-arch), which is the
+		   column header's job carried into a layout that has no columns. */
+		@media (max-width: 639px) {
+			#id_install .os-pane { padding: 0.9rem; }
+
+			#id_install .dl,
+			#id_install .dl tbody,
+			#id_install .dl tr,
+			#id_install .dl th,
+			#id_install .dl td { display: block; }
+
+			#id_install .dl thead { display: none; }
+			#id_install .dl th,
+			#id_install .dl td { border: 0; }
+			#id_install .dl tbody tr + tr { border-top: 1px solid rgba(151, 117, 250, 0.18); }
+			#id_install .dl tbody th { padding-bottom: 0.15rem; }
+			#id_install .dl td { padding-top: 0.1rem; padding-bottom: 0.1rem; }
+			#id_install .dl td:last-child { padding-bottom: 0.5rem; }
+
+			#id_install .dl td[data-arch]::before {
+				content: attr(data-arch);
+				display: inline-block;
+				min-width: 3.4rem;
+				font-size: 0.66rem;
+				letter-spacing: 0.06em;
+				color: rgba(216, 204, 255, 0.6);
+			}
+
+			#id_install .dl td[data-arch] small { margin-left: 3.4rem; }
+		}
 
 		/* -------- beta status tag -------- */
 		.beta-tag {
@@ -619,9 +796,10 @@
 							<span class="btn-glyph">&#9656;</span> LAUNCH WEB APP
 						</a>
 						<!-- Opens the install dialog rather than linking straight to the GitHub
-						     releases page. That page lists three files, two of them for macOS
-						     (the .zip is Homebrew's, not a human's), says nothing about the builds
-						     being unsigned, and offers nothing at all to an Intel-Mac visitor.
+						     releases page. That page lists every platform's files in one list, some
+						     of them not meant for a person at all (the macOS .zip is Homebrew's),
+						     says nothing about the builds being unsigned or which Linux file fits
+						     which machine, and offers nothing at all to an Intel-Mac visitor.
 						     It is still one click away at the foot of the dialog. -->
 						<button type="button" class="btn-cta btn-cta-ghost" id="id_install_open">
 							<span class="btn-glyph">&#8681;</span> DESKTOP CLIENT
@@ -662,8 +840,8 @@
 					     carries no quarantine attribute), which is why the .dmg below is the one
 					     carrying a warning and this is not. -->
 					<div class="step">
-						<p class="step-label">USING CLI</p>
-						<div class="cmd">
+						<p class="step-label">ONE COMMAND</p>
+						<div class="cmd cmd-main">
 							<code>curl -fsSL https://vineyard.run/install.sh | bash</code>
 							<button type="button" data-copy>COPY</button>
 						</div>
@@ -671,109 +849,157 @@
 
 					<div class="step">
 						<p class="step-label">HOMEBREW</p>
+						<!-- Too long for a phone line at any break. <wbr> after each slash and the org
+						     name kept whole (.tok) put the break at a path separator, where it reads as
+						     one, instead of at the hyphen inside "Vineyard-Intelligence". -->
 						<div class="cmd">
-							<code>brew install --cask Vineyard-Intelligence/vineyard/vineyard</code>
+							<code>brew install --cask <span class="tok">Vineyard-Intelligence/</span><wbr>vineyard/<wbr>vineyard</code>
 							<button type="button" data-copy>COPY</button>
 						</div>
 					</div>
 
 					<div class="step">
-						<p class="step-label">OR DOWNLOAD THE DISK IMAGE</p>
-						<p style="margin:0 0 .5rem">
-							<a href="https://github.com/whatabeautifulmemory/vineyard-website/releases/latest/download/Vineyard-mac-arm64.dmg">Vineyard-mac-arm64.dmg</a>
-							&mdash; Apple Silicon only (M1 and later).
-						</p>
-						<p class="warn">
-							UNSIGNED BUILD. Opening the .dmg normally, macOS will refuse it
-							("cannot be verified"). Right-click the app &rarr; Open &rarr; Open.
-							The install script above avoids this entirely.
-						</p>
+						<p class="step-label">OR DOWNLOAD</p>
+						<table class="dl dl-single">
+							<thead>
+								<tr><td></td><th scope="col">APPLE SILICON</th></tr>
+							</thead>
+							<tbody>
+								<tr>
+									<th scope="row">DISK IMAGE<small>M1 and later only</small></th>
+									<td><a href="https://github.com/whatabeautifulmemory/vineyard-website/releases/latest/download/Vineyard-mac-arm64.dmg">Vineyard-mac-arm64.dmg</a></td>
+								</tr>
+							</tbody>
+						</table>
 					</div>
+
+					<!-- Not "right-click → Open": macOS 15 removed that override for apps that are
+					     not notarized, and Privacy & Security's Open Anyway is the route that works on
+					     it and on the releases before it alike. -->
+					<p class="warn">
+						UNSIGNED BUILD. Opened from the .dmg, macOS refuses it the first time
+						("cannot be verified"): then System Settings &rarr; Privacy &amp; Security
+						&rarr; Open Anyway. The command above avoids this entirely.
+					</p>
 				</div>
 
 				<div class="os-pane" role="tabpanel" id="pane-win" aria-labelledby="tab-win" hidden>
 					<div class="step">
 						<p class="step-label">DOWNLOAD THE INSTALLER</p>
-						<p style="margin:0 0 .5rem">
-							<a href="https://github.com/whatabeautifulmemory/vineyard-website/releases/latest/download/Vineyard-win-x64-setup.exe">Vineyard-win-x64-setup.exe</a>
-							&mdash; 64-bit Windows.
-						</p>
-						<p class="warn">
-							UNSIGNED BUILD. SmartScreen will warn on first run:
-							More info &rarr; Run anyway.
-						</p>
+						<table class="dl dl-single">
+							<thead>
+								<tr><td></td><th scope="col">X64</th></tr>
+							</thead>
+							<tbody>
+								<tr>
+									<th scope="row">INSTALLER<small>64-bit Windows</small></th>
+									<td><a href="https://github.com/whatabeautifulmemory/vineyard-website/releases/latest/download/Vineyard-win-x64-setup.exe">Vineyard-win-x64-setup.exe</a></td>
+								</tr>
+							</tbody>
+						</table>
 					</div>
+
+					<p class="warn">
+						UNSIGNED BUILD. SmartScreen will warn on first run:
+						More info &rarr; Run anyway.
+					</p>
 				</div>
 
 				<div class="os-pane" role="tabpanel" id="pane-linux" aria-labelledby="tab-linux" hidden>
-					<p class="warn">
-						EARLY LINUX BUILD. Run on Ubuntu 24.04 and Xubuntu only &mdash; other distributions
-						and display setups may not work. The macOS and Windows builds are the tested ones;
-						please report what breaks.
-					</p>
-
+					<!-- The same one line as on macOS: install.sh picks the platform, then the
+					     package — and the early-build notice is last, as every pane's notice is, so
+					     the command most Linux visitors need is the first thing they see. -->
 					<div class="step">
 						<p class="step-label">ONE COMMAND</p>
-						<p style="margin:0 0 .5rem">
-							Detects the distribution and architecture, checks the download against the
-							release's SHA-256, and installs it with apt or pacman.
-						</p>
-						<div class="cmd">
+						<div class="cmd cmd-main">
 							<code>curl -fsSL https://vineyard.run/install.sh | bash</code>
 							<button type="button" data-copy>COPY</button>
 						</div>
-					</div>
-
-					<div class="step">
-						<p class="step-label">DEBIAN / UBUNTU</p>
-						<p style="margin:0 0 .5rem">
-							<a href="https://github.com/whatabeautifulmemory/vineyard-website/releases/latest/download/Vineyard-linux-amd64.deb">Vineyard-linux-amd64.deb</a>
-							&mdash; Ubuntu 22.04+ or Debian 12+, x86_64.
-							ARM64: <a href="https://github.com/whatabeautifulmemory/vineyard-website/releases/latest/download/Vineyard-linux-arm64.deb">Vineyard-linux-arm64.deb</a>.
-						</p>
-						<div class="cmd">
-							<code>sudo apt install ./Vineyard-linux-amd64.deb</code>
-							<button type="button" data-copy>COPY</button>
-						</div>
-					</div>
-
-					<div class="step">
-						<p class="step-label">ARCH / OMARCHY</p>
-						<p style="margin:0 0 .5rem">
-							<a href="https://github.com/whatabeautifulmemory/vineyard-website/releases/latest/download/Vineyard-linux-x86_64.pkg.tar.zst">Vineyard-linux-x86_64.pkg.tar.zst</a>
-							&mdash; Arch, Omarchy and other pacman distributions.
-						</p>
-						<div class="cmd">
-							<code>sudo pacman -U ./Vineyard-linux-x86_64.pkg.tar.zst</code>
-							<button type="button" data-copy>COPY</button>
-						</div>
-						<p style="margin:.5rem 0 0">
-							ARM64 (Apple Silicon via Asahi, and other aarch64 machines):
-							<a href="https://github.com/whatabeautifulmemory/vineyard-website/releases/latest/download/Vineyard-linux-aarch64.pkg.tar.zst">Vineyard-linux-aarch64.pkg.tar.zst</a>.
+						<p class="fine">
+							Picks the package for this machine &mdash; apt on Debian and Ubuntu, pacman
+							on Arch and Omarchy, an AppImage in <span class="whitespace-nowrap">~/.local/bin</span> on any other distribution
+							&mdash; and checks it against SHA256SUMS before installing.
 						</p>
 					</div>
 
 					<div class="step">
-						<p class="step-label">ANY DISTRIBUTION (APPIMAGE, X86_64)</p>
-						<p style="margin:0 0 .5rem">
-							<a href="https://github.com/whatabeautifulmemory/vineyard-website/releases/latest/download/Vineyard-linux-x86_64.AppImage">Vineyard-linux-x86_64.AppImage</a>
-							&mdash; nothing to install; keep it anywhere and run it. x86_64 only: on ARM, use the pacman package.
+						<p class="step-label">OR DOWNLOAD A PACKAGE</p>
+						<!-- Column headers say x86_64 / ARM64 because the file names cannot: Debian
+						     calls the two amd64 / arm64, pacman and AppImage x86_64 / aarch64. -->
+						<table class="dl">
+							<thead>
+								<tr><td></td><th scope="col">X86_64</th><th scope="col">ARM64 (AARCH64)</th></tr>
+							</thead>
+							<tbody>
+								<tr>
+									<th scope="row">DEB<small><span class="whitespace-nowrap">Ubuntu 22.04+</span>, <span class="whitespace-nowrap">Debian 12+</span></small></th>
+									<td data-arch="x86_64"><a href="https://github.com/whatabeautifulmemory/vineyard-website/releases/latest/download/Vineyard-linux-amd64.deb">Vineyard-linux-amd64.deb</a></td>
+									<td data-arch="ARM64"><a href="https://github.com/whatabeautifulmemory/vineyard-website/releases/latest/download/Vineyard-linux-arm64.deb">Vineyard-linux-arm64.deb</a></td>
+								</tr>
+								<tr>
+									<th scope="row">PACMAN<small>Arch, Omarchy, other pacman distros</small></th>
+									<td data-arch="x86_64"><a href="https://github.com/whatabeautifulmemory/vineyard-website/releases/latest/download/Vineyard-linux-x86_64.pkg.tar.zst">Vineyard-linux-x86_64.pkg.tar.zst</a></td>
+									<td data-arch="ARM64"><a href="https://github.com/whatabeautifulmemory/vineyard-website/releases/latest/download/Vineyard-linux-aarch64.pkg.tar.zst">Vineyard-linux-aarch64.pkg.tar.zst</a><small>incl. Apple Silicon via Asahi</small></td>
+								</tr>
+								<tr>
+									<th scope="row">APPIMAGE<small>any distribution</small></th>
+									<td data-arch="x86_64"><a href="https://github.com/whatabeautifulmemory/vineyard-website/releases/latest/download/Vineyard-linux-x86_64.AppImage">Vineyard-linux-x86_64.AppImage</a></td>
+									<td data-arch="ARM64"><a href="https://github.com/whatabeautifulmemory/vineyard-website/releases/latest/download/Vineyard-linux-aarch64.AppImage">Vineyard-linux-aarch64.AppImage</a></td>
+								</tr>
+							</tbody>
+						</table>
+						<!-- FUSE 2 and libz.so are read off the shipped AppImages' runtime, not
+						     assumed; install-linux.sh says the same after an AppImage install. -->
+						<p class="fine">
+							The AppImage needs FUSE 2 (libfuse.so.2); the ARM64 one also needs libz.so
+							&mdash; <span class="whitespace-nowrap">zlib1g-dev</span> on Debian and Ubuntu, already there on Arch. Checksums:
+							<a href="https://github.com/whatabeautifulmemory/vineyard-website/releases/latest/download/SHA256SUMS">SHA256SUMS</a>.
 						</p>
-						<div class="cmd">
-							<code>chmod +x Vineyard-linux-x86_64.AppImage &amp;&amp; ./Vineyard-linux-x86_64.AppImage</code>
-							<button type="button" data-copy>COPY</button>
-						</div>
+
+						<!-- Globs, not file names: one line per format then covers both
+						     architectures. "Vineyard-*", not "Vineyard-linux-*": only Linux files end
+						     in .deb, .pkg.tar.zst or .AppImage, and the shorter glob keeps the lines
+						     short on a phone. The .tok span makes a line that still has to wrap
+						     break at its space, not at the hyphen inside the file name; COPY reads
+						     textContent, so the copied command is the same with or without it.
+						     The price of a glob is that it takes every match — an earlier download
+						     the browser saved as "… (1).deb", or the other architecture's file —
+						     so the note under the commands says what to do then, and gives the
+						     AppImage's start command, which a glob cannot. -->
+						<details class="more">
+							<summary>INSTALL A DOWNLOADED FILE</summary>
+							<div class="cmd">
+								<code>sudo apt install <span class="tok">./Vineyard-*.deb</span></code>
+								<button type="button" data-copy>COPY</button>
+							</div>
+							<div class="cmd">
+								<code>sudo pacman -U <span class="tok">./Vineyard-*.pkg.tar.zst</span></code>
+								<button type="button" data-copy>COPY</button>
+							</div>
+							<div class="cmd">
+								<code>chmod +x <span class="tok">Vineyard-*.AppImage</span></code>
+								<button type="button" data-copy>COPY</button>
+							</div>
+							<p class="fine">
+								Run in the folder the file was saved to. If that folder holds more
+								than one Vineyard file, type the full name of the one you want in
+								place of the <span class="whitespace-nowrap">Vineyard-*</span> pattern. The AppImage needs no
+								install: once it is executable, start it by its name, e.g.
+								<span class="whitespace-nowrap">./Vineyard-linux-x86_64.AppImage</span>, from wherever you keep it.
+							</p>
+						</details>
 					</div>
 
 					<p class="warn">
-						UNSIGNED BUILD, like the others. Checksums:
-						<a href="https://github.com/whatabeautifulmemory/vineyard-website/releases/latest/download/SHA256SUMS">SHA256SUMS</a>.
-						Korean input needs an input method (e.g. ibus-hangul) that Linux does not install by default.
+						EARLY LINUX BUILD, unsigned like the others. So far it has been run on Ubuntu
+						24.04, Xubuntu and Omarchy only; the macOS and Windows builds are the tested
+						ones &mdash; please report what breaks. Korean text renders out of the box on
+						Ubuntu and Xubuntu; typing Korean needs an input method such as <span class="whitespace-nowrap">ibus-hangul</span>.
 					</p>
 				</div>
 
 				<div class="dlg-foot">
-					&gt; all files and checksums:
+					&gt; all files:
 					<a href="https://github.com/whatabeautifulmemory/vineyard-website/releases" target="_blank" rel="noopener noreferrer">GitHub releases</a>
 				</div>
 			</dialog>
@@ -831,7 +1057,8 @@
 			// A GUESS, and treated as one: it picks the tab that opens and never removes the
 			// others. `userAgentData.platform` where it exists, `navigator.platform` after —
 			// deprecated, but still the only signal in Safari and Firefox. Anything unrecognised
-			// falls through to macOS, which is the only platform with a one-line install.
+			// falls through to macOS: like Linux it opens on the one-line install, and of the two
+			// it is the build that has been tested.
 			function detect() {
 				var p = ((navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || '').toLowerCase();
 				var ua = (navigator.userAgent || '').toLowerCase();
