@@ -21,5 +21,6 @@ case "$(uname -s)" in
 esac
 
 # Streamed, not parsed: both scripts are self-contained, and passing "$@" through keeps
-# `--dry-run` working on the Linux side.
+# `--dry-run` and `--help` working (`curl -fsSL https://vineyard.run/install.sh | bash -s -- --help`).
+# Both scripts read them; each refuses an option it does not know rather than installing anyway.
 curl -fsSL "https://vineyard.run/${SCRIPT}" | bash -s -- "$@"
