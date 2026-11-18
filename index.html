@@ -303,6 +303,69 @@
 			letter-spacing: 0.06em;
 		}
 
+		/* -------- sample project link --------
+		   One real investigation under the hero, reachable before the analyst has an account of
+		   their own. It is a link, not another .btn-cta: the row above is sized for three buttons
+		   (see the xl rule) and a fourth would wrap, while the label has to stay readable at
+		   phone width. Boxed like the ghost button, with the same violet and hard pixel shadow,
+		   so it belongs to the CTA block without competing with LAUNCH WEB APP. */
+		.sample-project {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.6rem;
+			max-width: 100%;
+			padding: 0.7rem 1rem;
+			border: 1px solid rgba(177, 151, 252, 0.7);
+			border-left: 3px solid #b197fc;
+			background: rgba(151, 117, 250, 0.10);
+			color: #e6ddff;
+			text-decoration: none;
+			font-size: 0.875rem;
+			letter-spacing: 0.03em;
+			line-height: 1.35;
+			box-shadow: 3px 3px 0 rgba(151, 117, 250, 0.22);
+			transition: transform .08s steps(2), box-shadow .08s steps(2),
+				background-color .12s, border-color .12s, color .12s;
+		}
+
+		.sample-project:hover {
+			transform: translate(-1px, -1px);
+			border-color: #b197fc;
+			background: rgba(151, 117, 250, 0.18);
+			color: #ffffff;
+			box-shadow: 5px 5px 0 rgba(151, 117, 250, 0.28),
+				0 0 16px rgba(151, 117, 250, 0.25);
+		}
+
+		.sample-project:focus-visible {
+			outline: 2px solid #b197fc;
+			outline-offset: 3px;
+		}
+
+		.sample-project .sample-project-mark,
+		.sample-project .sample-project-arrow {
+			color: #b197fc;
+			flex: 0 0 auto;
+		}
+
+		.sample-project .sample-project-text {
+			min-width: 0;
+			overflow-wrap: anywhere;
+		}
+
+		.sample-project .sample-project-text strong {
+			font-weight: 700;
+			color: #ffffff;
+		}
+
+		@media (max-width: 767px) {
+			.sample-project {
+				display: flex;
+				width: 100%;
+				justify-content: flex-start;
+			}
+		}
+
 		/* -------- install dialog --------
 		   A native <dialog>, which is the whole reason there is no JS scaffolding here: Esc, the
 		   backdrop, the top layer and focus containment are the element's job, not ours. */
@@ -811,6 +874,16 @@
 					</div>
 					<p class="btn-cta-note text-accent-dim text-xs mt-3 text-center md:text-left">
 						&gt; runs in your browser &mdash; or install the desktop client for macOS, Windows or Linux. things may break while we test.
+					</p>
+
+					<p class="mt-4 text-center md:text-left">
+						<a class="sample-project"
+							href="https://app.vineyard.run/projects/034k5AghHwzSvSmlxSvl3T"
+							target="_blank" rel="noopener noreferrer">
+							<span class="sample-project-mark" aria-hidden="true">&#9656;</span>
+							<span class="sample-project-text"><strong>Sample Project</strong> (Kimsuky github &#39;choemiyang&#39;)</span>
+							<span class="sample-project-arrow" aria-hidden="true">&#8599;</span>
+						</a>
 					</p>
 				</div>
 			</div>
