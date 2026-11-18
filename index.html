@@ -193,6 +193,58 @@
 			100% { opacity: 1; }
 		}
 
+		/* -------- hero screenshot: the workbench in the right column --------
+		   The screenshot is the app itself, not a device mockup: a thin violet frame and the same
+		   corner brackets as the title keep it in the page's language, while the hard shadow sits
+		   on the skyline instead of a white card. It drops below the CTA column until xl, where the
+		   hero splits into 2/5 text and 3/5 product. */
+		.hero-shot {
+			position: relative;
+			margin: 2.5rem 0 0;
+			width: 100%;
+		}
+
+		.hero-shot img {
+			display: block;
+			width: 100%;
+			height: auto;
+			border: 1px solid rgba(177, 151, 252, 0.65);
+			background: #06040f;
+			box-shadow: 0 0 0 4px rgba(1, 4, 5, 0.55),
+				10px 10px 0 rgba(151, 117, 250, 0.16),
+				0 0 40px rgba(151, 117, 250, 0.16);
+		}
+
+		.hero-shot::before,
+		.hero-shot::after {
+			content: "";
+			position: absolute;
+			width: 26px;
+			height: 26px;
+			opacity: 0.85;
+			pointer-events: none;
+		}
+
+		.hero-shot::before {
+			top: -1px;
+			left: -1px;
+			border-top: 1px solid #b197fc;
+			border-left: 1px solid #b197fc;
+		}
+
+		.hero-shot::after {
+			bottom: -1px;
+			right: -1px;
+			border-bottom: 1px solid #b197fc;
+			border-right: 1px solid #b197fc;
+		}
+
+		@media (min-width: 1280px) {
+			.hero-shot {
+				margin-top: 0;
+			}
+		}
+
 		/* -------- RGB-split glitch, toggled at random intervals via JS -------- */
 		.glitching {
 			animation: rgb-split .22s steps(2) 1;
@@ -899,7 +951,14 @@
 			</div>
 
 			<!--Right Col-->
-			<div class="w-full xl:w-3/5 py-6 overflow-y-hidden">
+			<div class="w-full xl:w-3/5 py-6 xl:pl-10">
+				<!-- 1800x1240 WebP of the sample project, captured from the app; the intrinsic
+				     dimensions are on the img so the hero does not reflow while it loads. -->
+				<figure class="hero-shot">
+					<img src="screenshot.webp" width="1800" height="1240"
+						alt="Vineyard showing the sample Kimsuky GitHub account 'choemiyang' project: an infrastructure graph, the node table and the AI agent panel."
+						fetchpriority="high" decoding="async">
+				</figure>
 			</div>
 
 			<!-- Install dialog. Detection chooses the OPEN tab and nothing else — every option
