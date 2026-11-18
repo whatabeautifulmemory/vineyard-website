@@ -315,26 +315,31 @@
 			gap: 0.6rem;
 			max-width: 100%;
 			padding: 0.7rem 1rem;
-			border: 1px solid rgba(177, 151, 252, 0.7);
-			border-left: 3px solid #b197fc;
-			background: rgba(151, 117, 250, 0.10);
-			color: #e6ddff;
+			border: 1px solid #b197fc;
+			border-left: 3px solid #d0bfff;
+			/* Opaque, not a tint: the hero sits over the animated skyline, and a 10% violet
+			   wash disappeared into whatever pixel happened to be behind it. A dark violet
+			   plate keeps the box readable over every frame of the canvas. */
+			background-color: #241542;
+			background-image: linear-gradient(180deg, rgba(177, 151, 252, 0.16) 0%, transparent 70%);
+			color: #f4efff;
 			text-decoration: none;
 			font-size: 0.875rem;
 			letter-spacing: 0.03em;
 			line-height: 1.35;
-			box-shadow: 3px 3px 0 rgba(151, 117, 250, 0.22);
+			box-shadow: 4px 4px 0 rgba(151, 117, 250, 0.45),
+				0 0 14px rgba(151, 117, 250, 0.16);
 			transition: transform .08s steps(2), box-shadow .08s steps(2),
 				background-color .12s, border-color .12s, color .12s;
 		}
 
 		.sample-project:hover {
 			transform: translate(-1px, -1px);
-			border-color: #b197fc;
-			background: rgba(151, 117, 250, 0.18);
+			border-color: #d0bfff;
+			background-color: #34205e;
 			color: #ffffff;
-			box-shadow: 5px 5px 0 rgba(151, 117, 250, 0.28),
-				0 0 16px rgba(151, 117, 250, 0.25);
+			box-shadow: 6px 6px 0 rgba(151, 117, 250, 0.55),
+				0 0 22px rgba(177, 151, 252, 0.35);
 		}
 
 		.sample-project:focus-visible {
